@@ -1,0 +1,8 @@
+export default {
+  data: [
+    {
+      data: '{"layouts": [{"layoutId": "test", "layoutName": "test", "main": true }], "datasets": [{"datasetId":"uuid","datasetName":"用户","selection":true,"primaryKey":"userid","idField":"userid","parentField":"parentid","name":"user","autoQuery":true,"pageSize":5,"queryFields":[{"name":"name","type":"string","label":"姓名"},{"name":"age","type":"number","label":"年龄"},{"name":"code","type":"object","textField":"description","label":"代码描述","lovCode":"LOV_CODE"},{"name":"sex","type":"string","label":"性别","lookupCode":"HR.EMPLOYEE_GENDER"}],"fields":[{"name":"userid","type":"string","label":"编号","required":true,"unique":true},{"name":"name","type":"intl","label":"姓名","required":true},{"name":"age","type":"number","label":"年龄","unique":"uniqueGroup"},{"name":"code","type":"object","textField":"description","label":"代码描述","lovCode":"LOV_CODE"},{"name":"code_code","bind":"code.code","type":"string","label":"代码"},{"name":"code_description","bind":"code.description","type":"string","label":"代码描述"},{"name":"sex","type":"string","label":"性别","lookupCode":"HR.EMPLOYEE_GENDER","required":true},{"name":"multiple","type":"string","label":"多值","multiple":true,"lookupCode":"HR.EMPLOYEE_GENDER"},{"name":"accountMultiple","type":"string","bind":"account.multiple","label":"多值拼接","multiple":",","lookupCode":"HR.EMPLOYEE_GENDER"},{"name":"account","type":"object"},{"name":"enable","type":"boolean","label":"是否开启","unique":"uniqueGroup"},{"name":"frozen","type":"boolean","label":"是否冻结","trueValue":"Y","falseValue":"N"},{"name":"startDate","type":"date","label":"开始日期"},{"name":"endDate","type":"dateTime","label":"结束日期"}]}]}',
+    },
+  ],
+  paging: false,
+};

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.choerodon.hap.modeling.mapper.MetadataColumnMapper">
+    <select id="selectColumnByTableName" resultType="io.choerodon.hap.modeling.dto.MetadataColumn">
+        <bind name="__current_lang" value="@io.choerodon.mybatis.util.OGNL@language()"/>
+        SELECT C.id, C.table_name,C.column_name,TL.description, C.primary_key, C.nullable, C.multi_language, C.type_name, C.column_size
+        FROM metadata_column_b C
+        LEFT JOIN metadata_column_tl TL ON C.id=TL.id AND TL.LANG=#{__current_lang}
+        WHERE C.column_name NOT LIKE '\_\_DEL\_%' AND C.table_name=#{tableName}
+        ORDER BY C.column_name DESC
+    </select>
+</mapper>

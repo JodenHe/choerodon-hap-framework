@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: registry.choerodon.com.cn/hap-framework/hap-framework
+  pullPolicy: Always
+
+preJob:
+  timeout: 300
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.6.5
+  enable: true
+
+service:
+  enable: false
+  type: ClusterIP
+  port: 8080
+  name: hap-framework
+
+ingress:
+  enable: false
+  host: choerodon.com.cn
+
+env:
+  open:
+    MYSQL_HOST: 127.0.0.1
+    MYSQL_PORT: 3306
+    MYSQL_DB: hap_dev
+    MYSQL_USER: hap_dev
+    MYSQL_PASS: hap_dev
+    REDIS_IP: 127.0.0.1
+    REDIS_DB: 6379
+
+
+logs:
+  parser: spring-boot
+
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    memory: 1Gi

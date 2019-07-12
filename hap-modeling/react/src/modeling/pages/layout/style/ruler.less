@@ -1,0 +1,37 @@
+@import "default";
+
+.@{modeling-prefix}-ruler {
+  position: relative;
+  background-image: url('../assets/ruler.png');
+  background-repeat: repeat-x;
+  background-position: 0 .24rem;
+  border-bottom: 1px solid #e9ebee;
+  margin-bottom: .1rem;
+  padding: .02rem;
+
+  &-pointer {
+    position: absolute;
+    right: -.095rem;
+    bottom: .07rem;
+    height: .06rem;
+    width: .09rem;
+    cursor: ew-resize;
+    background-image: url('../assets/ruler.png');
+    background-position: 0 -.1rem;
+    user-select: none;
+    &-wrapper {
+      position: relative;
+      display: inline-block;
+      height: .26rem;
+    }
+    & > span {
+      position: absolute;
+      left: .045rem;
+      top: -.18rem;
+      color: #999;
+      width: .24rem;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+export default {
+  name: 'ProcessDefinition',
+  paging: false,
+  selection: 'single',
+  fields: [
+    { name: 'id', type: 'string', label: 'ID' },
+    { name: 'url', type: 'string', label: 'url' },
+    { name: 'key', type: 'string', label: '流程编码' },
+    { name: 'version', type: 'number', label: '版本' },
+    { name: 'name', type: 'string', label: '流程名称' },
+    { name: 'description', type: 'string', label: '描述' },
+    { name: 'tenantId', type: 'string', label: 'tenantId' },
+    { name: 'deploymentId', type: 'string', label: 'deploymentId' },
+    { name: 'deploymentUrl', type: 'string', label: 'deploymentUrl' },
+    { name: 'resource', type: 'string', label: 'resource' },
+    { name: 'category', type: 'string', label: '分类' },
+    { name: 'diagramResource', type: 'string', label: 'diagramResource' },
+    { name: 'graphicalNotationDefined', type: 'boolean', label: 'graphicalNotationDefined' },
+    { name: 'suspended', type: 'boolean', label: 'suspended' },
+    { name: 'suspended', type: 'boolean', label: 'suspended' },
+  ],
+};

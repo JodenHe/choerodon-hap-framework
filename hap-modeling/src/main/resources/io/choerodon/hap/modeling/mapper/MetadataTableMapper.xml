@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.choerodon.hap.modeling.mapper.MetadataTableMapper">
+    <select id="selectMetadataTables" resultType="io.choerodon.hap.modeling.dto.MetadataTable">
+        <bind name="__current_lang" value="@io.choerodon.mybatis.util.OGNL@language()"/>
+        SELECT T.id, T.table_name AS tableName, TL.description, M.locked_by AS lockedBy, T.multi_language AS multiLanguage
+        FROM metadata_table_b T
+        LEFT JOIN metadata_table_tl TL ON T.id=TL.id AND TL.LANG=#{__current_lang}
+        LEFT JOIN metadata M ON M.name=T.table_name AND M.DATA_TYPE='TABLE'
+        WHERE T.table_name NOT LIKE '\_\_del\_%'
+        <if test="tableName != null">
+            AND T.table_name LIKE concat('%', concat(#{tableName}, '%'))
+        </if>
+        ORDER BY T.table_name
+    </select>
+
+    <select id="selectAllTables" resultType="io.choerodon.hap.modeling.dto.MetadataTable">
+        <bind name="__current_lang" value="@io.choerodon.mybatis.util.OGNL@language()"/>
+        SELECT T.id, T.table_name AS tableName, TL.description
+        FROM metadata_table_b T
+        LEFT JOIN metadata_table_tl TL ON T.id=TL.id AND TL.LANG=#{__current_lang}
+        WHERE T.table_name NOT LIKE '\_\_del\_%'
+        ORDER BY T.table_name
+    </select>
+</mapper>

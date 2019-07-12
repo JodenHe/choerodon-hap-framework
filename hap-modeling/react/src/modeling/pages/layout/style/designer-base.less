@@ -1,0 +1,17 @@
+@import "default";
+
+.@{modeling-prefix}-close-btn {
+  color: @error-color;
+  position: relative;
+  &:after {
+    display: block;
+    content: "";
+    position: absolute;
+    background-color: @component-background;
+    width: .12rem;
+    height: .12rem;
+    top: .02rem;
+    left: .02rem;
+    z-index: -1;
+  }
+}

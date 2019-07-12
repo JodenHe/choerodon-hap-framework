@@ -1,0 +1,137 @@
+@import "default";
+
+.@{modeling-prefix} {
+  &-dragging {
+    cursor: not-allowed;
+    .@{c7n-pro-prefix}-menu-submenu-title:hover,
+    .@{c7n-pro-prefix}-menu-item:hover,
+    .@{c7n-pro-prefix}-menu-item:hover a,
+    .menu-head,
+    .menu-footer {
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+    .@{modeling-prefix}-drag-zone {
+      &-btn-group {
+        display: none !important;
+      }
+      &-snapshot {
+        cursor: not-allowed;
+        z-index: 2;
+      }
+    }
+    .@{modeling-prefix}-drop-zone {
+      cursor: not-allowed;
+      &-drop-target {
+        cursor: move;
+        cursor: grabbing;
+      }
+      &-item {
+        transition: transform .3s;
+      }
+    }
+  }
+
+  &-drag-zone {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    transition: all .3s;
+    position: relative;
+    &-btn-group {
+      position: absolute;
+      top: -.09rem;
+      right: -.09rem;
+      .icon {
+        cursor: pointer;
+      }
+      opacity: 0;
+      transition: all .3s;
+      z-index: 2;
+    }
+    &-hover > &-btn-group,
+    &:hover > &-btn-group {
+      opacity: 1;
+    }
+    &-snapshot {
+      position: relative;
+      z-index: 1;
+      line-height: .3rem;
+      cursor: move;
+      cursor: grab;
+      transition: all .3s;
+      border: @border-width-base dashed @border-color-base;
+      background-color: @component-background;
+      user-select: none;
+      line-height: .3rem;
+      &-current {
+        border-color: @input-hover-border-color;
+        background-color: #e8eaf6;
+        border-style: solid;
+      }
+      &:focus {
+        outline: none;
+      }
+      > * {
+        position: relative;
+        z-index: -1;
+        pointer-events: none;
+      }
+    }
+  }
+  body > &-drag-zone-snapshot {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    transition: none;
+    display: inline-block;
+  }
+
+  &-drop-zone {
+    position: relative;
+    border-width: 2px;
+    border-style: dashed;
+    border-color: transparent;
+    &-empty {
+      border: @border-width-base @border-style-base @border-color-base;
+      line-height: .5rem;
+      text-align: center;
+      color: @disabled-color;
+      transition: left .3s, top .3s;
+    }
+    &-item {
+      position: static;
+      padding: .05rem;
+      transition: width .3s, height .3s;
+      &-placeholder {
+        visibility: hidden;
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+      }
+    }
+    &-drop-target {
+      border-color: @primary-color;
+      background-color: rgba(140, 158, 255, 0.12);
+    }
+    &-droppable {
+      border-color: @green-5;
+      background-color: rgba(26, 177, 111, 0.08)
+    }
+    &-horizontal > &-item > &-empty {
+      display: inline-block;
+      line-height: .3rem;
+      margin: .01rem;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+    &-vertical > &-item {
+      display: block;
+    }
+    &-horizontal > &-item {
+      display: inline-block;
+    }
+  }
+}

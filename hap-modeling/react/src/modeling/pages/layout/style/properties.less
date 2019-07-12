@@ -1,0 +1,65 @@
+@import "default";
+
+.@{modeling-prefix}-properties {
+  width: 2.5rem;
+  border-left: 1px solid #d3d3d3;
+  vertical-align: top;
+  position: relative;
+  padding: .1rem;
+
+  &-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-header {
+    border-bottom: @border-width-base @border-style-base @border-color-base;
+    padding: .08rem;
+    margin: 0;
+    font-size: .16rem;
+  }
+
+  &-body {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: .05rem;
+  }
+
+  .@{c7n-pro-prefix}-radio-button {
+    padding: 0 .05rem;
+    line-height: 1.5;
+    .icon {
+      line-height: 1.5;
+    }
+  }
+
+  &-color {
+    width: .18rem;
+    height: .18rem;
+    margin: .02rem;
+    &-select .@{c7n-pro-prefix}-radio-button {
+      padding: 0;
+      border-radius: @border-radius-base;
+      margin-right: .05rem;
+      + .@{c7n-pro-prefix}-radio-button {
+        margin-left: 0;
+      }
+      .@{c7n-pro-prefix}-radio-inner {
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+}
+
+.@{c7n-pro-prefix}-output-empty:after {
+  display: inline-block;
+  content: "";
+  width: .01rem;
+}

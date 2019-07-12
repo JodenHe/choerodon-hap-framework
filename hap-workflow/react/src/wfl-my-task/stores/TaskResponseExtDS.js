@@ -1,0 +1,27 @@
+export default {
+  selection: false,
+  autoQuery: true,
+  pageSize: 20,
+  queryUrl: '/wfl/query/tasks',
+  dataKey: 'data',
+  fields: [
+    { name: 'processInstanceId', type: 'string', label: '流程ID' },
+    { name: 'id', type: 'string', label: 'taskID' },
+    { name: 'processName', type: 'string', label: '流程名称' },
+    { name: 'description', type: 'string', label: '描述' },
+    { name: 'name', type: 'string', label: '审批环节' },
+    { name: 'startUserId', type: 'string', label: '申请人' },
+    { name: 'startUserName', type: 'string', label: '申请人姓名' },
+    { name: 'createTime', type: 'string', label: '创建时间' },
+    { name: 'priority', type: 'number', label: '优先级' },
+    { name: 'dueTime', type: 'number' },
+  ],
+  queryFields: [
+    { name: 'processInstanceId', type: 'string', label: '流程ID' },
+    { name: 'processDefinitionNameLike', type: 'string', label: '流程名称' },
+    { name: 'startUserName', type: 'string', label: '申请人' },
+    { name: 'priority', type: 'string', label: '优先级', lookupCode: 'wfl.TASK_PRIORITY', defaultValue: 'all' },
+    { name: 'createdAfter', type: 'dateTime', label: '创建时间从' },
+    { name: 'createdBefore', type: 'dateTime', label: '创建时间至' },
+  ],
+};

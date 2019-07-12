@@ -1,0 +1,80 @@
+@import "default";
+
+.@{modeling-prefix}-table {
+  background-color: @component-background;
+  border: @border-width-base @border-style-base @border-color-base;
+  &-header {
+    padding: 0 .1rem;
+  }
+  &-columns {
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 100%;
+    &-wrapper {
+      position: relative;
+      overflow: auto;
+    }
+    > .@{modeling-prefix}-drop-zone {
+      padding-bottom: .2rem;
+      .@{modeling-prefix}-drop-zone-item:last-child {
+        width: 1.5rem;
+      }
+    }
+  }
+  &-column-item {
+    padding: 0 .1rem;
+  }
+  &-bar {
+    border-bottom: @border-width-base @border-style-base @border-color-base;
+    padding: .05rem;
+    overflow: hidden;
+  }
+  &-btn-group {
+    &-buttons {
+      min-width: .81rem;
+      min-height: .4425rem;
+    }
+    &-new {
+      margin: .08rem;
+      vertical-align: middle;
+    }
+  }
+  &-query-bar {
+    float: right;
+    > button {
+      margin: .08rem 0;
+      vertical-align: middle;
+    }
+    &-more,
+    &-query {
+      pointer-events: none;
+    }
+    &-fields {
+      min-width: 1.5rem;
+      min-height: .48rem;
+    }
+  }
+  &-btn-group-buttons,
+  &-query-bar-fields {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  &-commander {
+    border-top: @border-width-base @border-style-base @border-color-base;
+    padding: .05rem;
+    overflow: hidden;
+    > label {
+      float: left;
+      line-height: .3825rem;
+    }
+  }
+  &-bar &-btn-group {
+    float: left;
+  }
+  &-commander &-btn-group {
+    float: right;
+  }
+  &-query-field-wrapper {
+    padding: .01rem;
+  }
+}

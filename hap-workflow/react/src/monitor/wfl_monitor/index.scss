@@ -1,0 +1,73 @@
+.apil-form {
+  input {
+    border: none;
+    background-color: white !important;
+    color: #0c0c0c !important;
+    font-weight: bold;
+  }
+}
+
+.approve-block {
+  padding: 0 20px;
+}
+
+.approve-block h3 {
+  font-weight: normal;
+  color: #000;
+  font-size: 16px;
+}
+
+.approve-block h4 {
+  font-weight: normal;
+  color: #000;
+  font-size: 14px;
+}
+
+.approve-table {
+  border-collapse: collapse;
+}
+
+.approve-table td {
+  padding: 8px;
+  font-size: 12px;
+  border: #e7ecf1 solid 1px;
+}
+
+#historyTable {
+  width: 100%;
+}
+
+#historyTable thead td {
+  padding: 8px;
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+#includeFrame {
+  border: none !important;
+  box-shadow: none;
+}
+
+#ta-comment {
+  padding: 10px;
+  width: 700px;
+  height: 40px;
+  border: #e7ecf1 solid 1px;
+}
+
+.comment-too-long {
+  color: red;
+}
+
+.action_ok {
+  color: #5fb760;
+}
+
+.action_dangerous {
+  color: #eeac5f;
+}
+
+.action_custom {
+  color: #60c0dc;
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.choerodon.hap.modeling.mapper.MetadataRelationMapper">
+
+    <select id="selectMetadataRelations" resultType="io.choerodon.hap.modeling.dto.MetadataRelation">
+        SELECT R.id, R.unique_name, M.locked_by, R.relation_type,
+        R.master_table, R.master_column, R.relation_table, R.relation_column
+        FROM metadata_relation R
+        LEFT JOIN metadata M ON M.name=R.unique_name AND M.DATA_TYPE='RELATION'
+        WHERE R.enable=1
+        ORDER BY R.unique_name
+    </select>
+    <select id="selectRelationTable" resultType="map">
+        <bind name="__locale_lang_bind" value="@io.choerodon.mybatis.util.OGNL@language()" />
+        SELECT metadata_table_b.ID AS id, metadata_table_b.TABLE_NAME AS tableName,
+        metadata_table_tl.DESCRIPTION AS description, metadata_relation.RELATION_COLUMN AS relationColumnName,
+        metadata_relation.MASTER_COLUMN AS masterColumnName
+        FROM metadata_relation LEFT JOIN metadata_table_b ON ( metadata_relation.MASTER_TABLE = metadata_table_b.TABLE_NAME )
+        LEFT JOIN metadata_table_tl ON (metadata_table_b.ID = metadata_table_tl.ID AND metadata_table_tl.LANG=#{__locale_lang_bind})
+        WHERE metadata_relation.RELATION_TABLE = #{table,jdbcType=VARCHAR,javaType=java.lang.String}
+    </select>
+</mapper>

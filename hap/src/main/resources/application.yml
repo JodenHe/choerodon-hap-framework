@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:hap_dev}?useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:hap_dev}
+    password: ${MYSQL_PASS:hap_dev}
+redis:
+  ip: ${REDIS_IP:localhost}
+  db: ${REDIS_DB:10}
+
+#db.type property is used for activiti
+db:
+  type: mysql
+  #type: oracle
+  #type: mssql
+  #type: postgresql
+#mybatis.identity property is userd for mybatis Self-increasing primaryKey strategy
+mybatis:
+  identity: JDBC
+  #identity: SEQUENCE
+
+logging:
+  file: hap
+  path: log
+  level:
+    root: debug
+  total:  30GB
+  history:  30

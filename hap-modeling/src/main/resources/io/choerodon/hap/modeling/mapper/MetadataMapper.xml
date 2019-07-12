@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.choerodon.hap.modeling.mapper.MetadataMapper">
+    <select id="selectMetadata" resultType="map">
+        SELECT metadata.id, metadata.name,data_type AS dataType,metadata.status,sys_user.user_name AS lockedUserName FROM metadata
+        LEFT JOIN sys_user ON metadata.locked_by=sys_user.user_id
+    </select>
+
+    <update id="createTable">
+        CREATE TABLE ${table.tableName} (
+            UUID char(32) NOT NULL,
+            CREATED_BY bigint NOT NULL DEFAULT '-1',
+            CREATION_DATE datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            LAST_UPDATED_BY bigint NOT NULL DEFAULT '-1',
+            LAST_UPDATE_DATE datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT PK_UUID PRIMARY KEY (UUID)
+        )
+    </update>
+
+    <update id="createMultiLanguageTable">
+        CREATE TABLE ${table.tableName} (
+            UUID char(32) NOT NULL,
+            LANG char(32) NOT NULL,
+            CREATED_BY bigint NOT NULL DEFAULT '-1',
+            CREATION_DATE datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            LAST_UPDATED_BY bigint NOT NULL DEFAULT '-1',
+            LAST_UPDATE_DATE datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT PK_UUID_LANG PRIMARY KEY (UUID, LANG)
+        )
+    </update>
+
+    <update id="renameTable">
+        ALTER TABLE ${table.tableName} RENAME TO ${newName}
+    </update>
+
+    <update id="removeTable">
+        DROP TABLE ${table.tableName}
+    </update>
+    
+    <update id="createColumn">
+        ALTER TABLE ${column.tableName}
+        ADD ${column.columnName} ${column.displayType}<if test="!column.nullable"> NOT</if> NULL
+    </update>
+
+    <update id="renameColumn">
+        ALTER TABLE ${column.tableName}
+        CHANGE ${column.columnName} ${newName} ${column.displayType}<if test="!column.nullable"> NOT</if> NULL
+    </update>
+
+    <update id="removeColumn">
+        ALTER TABLE ${column.tableName}
+        DROP COLUMN ${column.columnName}
+    </update>
+    
+</mapper>
