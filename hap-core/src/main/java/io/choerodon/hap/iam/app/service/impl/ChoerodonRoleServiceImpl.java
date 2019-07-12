@@ -1,7 +1,16 @@
 package io.choerodon.hap.iam.app.service.impl;
 
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import io.choerodon.hap.iam.api.query.RoleQuery;
 import io.choerodon.hap.iam.api.validator.RoleValidator;
 import io.choerodon.hap.iam.app.service.ChoerodonRoleService;
@@ -12,18 +21,6 @@ import io.choerodon.hap.iam.infra.dto.PermissionDTO;
 import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import io.choerodon.hap.iam.infra.dto.RolePermissionDTO;
 import io.choerodon.hap.iam.infra.mapper.ChoerodonRoleMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EMPTY;
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EXISTED;
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE;
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NOT_EXISTED;
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_UPDATE;
 
 /**
  * @author qiang.zeng
@@ -98,11 +95,15 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
             throw new ChoerodonRoleException(ERROR_ROLE_NOT_EXISTED, roleDTO.getName());
         }
         if (role.getBuiltIn()) {
-            throw new ChoerodonRoleException(ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE, roleDTO.getName());
+            role.setDescription(roleDTO.getDescription());
+            if (roleMapper.updateByPrimaryKey(role) != 1) {
+                throw new ChoerodonRoleException(ERROR_ROLE_UPDATE);
+            }
+            return role;
         }
         role.setName(roleDTO.getName());
         role.setDescription(roleDTO.getDescription());
-        if (roleMapper.updateByPrimaryKeySelective(role) != 1) {
+        if (roleMapper.updateByPrimaryKey(role) != 1) {
             throw new ChoerodonRoleException(ERROR_ROLE_UPDATE);
         }
         role.setPermissions(roleDTO.getPermissions());

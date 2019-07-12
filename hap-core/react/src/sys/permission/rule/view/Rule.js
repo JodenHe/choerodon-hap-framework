@@ -26,15 +26,6 @@ function dynamicLovEditor(record) {
   }
 }
 
-function dynamicLovRender({ record }) {
-  const { value } = record.data;
-
-  if (value) {
-    return value.roleName ? value.roleName : value.userName;
-  }
-  return null;
-}
-
 export default ({ ruleDS, ruleAssignDS, ruleDetailRoleDS, ruleDetailSqlDS, ruleDetailUserDS }) => {
   let ruleAssignModal;
 
@@ -52,6 +43,14 @@ export default ({ ruleDS, ruleAssignDS, ruleDetailRoleDS, ruleDetailSqlDS, ruleD
       record.set('ruleId', ruleDS.current.get('ruleId'));
     });
     ruleAssignDS.submit();
+  }
+
+  function handleDetailAssignDelete(detailRecord) {
+    ruleAssignDS.data.forEach((record) => {
+      record.set('detailId', detailRecord.get('detailId'));
+      record.set('ruleId', ruleDS.current.get('ruleId'));
+    });
+    ruleAssignDS.delete(ruleAssignDS.selected);
   }
 
 
@@ -78,7 +77,7 @@ export default ({ ruleDS, ruleAssignDS, ruleDetailRoleDS, ruleDetailSqlDS, ruleD
           buttons={[
             'add',
             <Button funcType="flat" icon="save" color="blue" onClick={() => handleDetailAssignSave(detailRecord)}>{$l('hap.save')}</Button>,
-            'delete',
+            <Button funcType="flat" icon="delete" color="blue" onClick={() => handleDetailAssignDelete(detailRecord)}>{$l('hap.delete')}</Button>,
           ]}
         >
           <Column name="assignField" editor={<Select clearButton={false} />} />

@@ -82,6 +82,7 @@ export default class CreateRole extends Component {
     if (this.isEdit) {
       RoleStore.getRoleById(this.roleId)
         .then((res) => {
+          this.props.form.resetFields();
           RoleStore.setRoleMsg(res);
           RoleStore.setSelectedPermissions(res.permissions.map(p => p.id));
         });
@@ -512,18 +513,14 @@ export default class CreateRole extends Component {
     const isDefault = isEdit && RoleStore.roleMsg.builtIn;
     return (
       <div style={{ marginTop: 32 }}>
-        {
-          isDefault ? null : (
-            <Button
-              funcType="raised"
-              type="primary"
-              onClick={this.handleCreate}
-              style={{ marginRight: 12 }}
-            >
-              <FormattedMessage id={!this.isEdit ? 'create' : 'save'} />
-            </Button>
-          )
-        }
+        <Button
+          funcType="raised"
+          type="primary"
+          onClick={this.handleCreate}
+          style={{ marginRight: 12 }}
+        >
+          <FormattedMessage id={!this.isEdit ? 'create' : 'save'} />
+        </Button>
         <Button
           funcType="raised"
           onClick={this.handleReset}

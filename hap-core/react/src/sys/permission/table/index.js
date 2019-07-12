@@ -8,7 +8,7 @@ import RuleEditDataSet from './stores/RuleEditDataSet';
 const { Column } = Table;
 
 function insertSelectEditor(record) {
-  return record.status === 'add' ? <Select searchable /> : null;
+  return record.status === 'add' ? <Select searchable combo/> : null;
 }
 
 function tableFieldSelectEditor(record) {

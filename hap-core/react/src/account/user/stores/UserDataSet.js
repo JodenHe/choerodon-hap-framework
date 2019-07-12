@@ -9,7 +9,7 @@ export default {
     { name: 'userId', type: 'number' },
     { name: 'userName', type: 'string', label: $l('user.username'), required: true, unique: true },
     { name: 'email', type: 'email', label: $l('user.email'), required: true },
-    { name: 'phone', type: 'number', label: $l('user.phone'), required: true },
+    { name: 'phone', type: 'string', label: $l('user.phone'), required: true },
     { name: 'startActiveDate', type: 'date', label: $l('user.startactivedate'), defaultValue: new Date() },
     { name: 'endActiveDate', type: 'date', label: $l('user.endactivedate') },
     { name: 'status', type: 'string', label: $l('user.status'), lookupCode: 'SYS.USER_STATUS', defaultValue: 'ACTV' },

@@ -48,11 +48,6 @@ public class ChoerodonRoleException extends BaseException {
      * 内置角色不允许被删除.
      */
     public static final String ERROR_ROLE_NOT_ALLOW_TO_BE_DELETE = "error.role.not.allow.to.be.delete";
-    /**
-     * 内置角色不允许被更新.
-     */
-    public static final String ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE = "error.role.not.allow.to.be.update";
-
 
     public ChoerodonRoleException(String code, Object... parameters) {
         super(code, code, parameters);
