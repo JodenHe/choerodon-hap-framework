@@ -56,7 +56,7 @@ export default ({ ruleDS, ruleAssignDS, ruleDetailRoleDS, ruleDetailSqlDS, ruleD
 
 
   async function openDetailAssignModal(detailRecord) {
-    if (!detailRecord) {
+    if (!detailRecord || detailRecord.status === 'add') {
       Modal.error('请先保存!');
       return;
     }

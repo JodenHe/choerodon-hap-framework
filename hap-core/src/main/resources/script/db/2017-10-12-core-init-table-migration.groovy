@@ -676,13 +676,6 @@ databaseChangeLog(logicalFilePath: "patch.groovy") {
         }
     }
 
-
-    if (helper.isPostgresql() || helper.isHana()) {
-        changeSet(author: "qixiangyu", id: "20180208-sys-attachment-1-fix") {
-            dropIndex(tableName: "SYS_ATTACHMENT", indexName: "SYS_ATTACHMENT_N2")
-        }
-    }
-
     if (helper.isMysql()) {
         changeSet(author: "qixiangyu", id: "interface-alter-url-length-drop-index") {
             preConditions(onFail: "MARK_RAN") {

@@ -11,7 +11,7 @@
         <version>2.0.6.RELEASE</version>
         <relativePath/>
     </parent>
-    <version>4.0.0-RELEASE</version>
+    <version>4.0.1-RELEASE</version>
     <modules>
         <module>hap</module>
         <module>hap-core</module>
@@ -82,7 +82,7 @@
         <!-- sonar-analysis -->
         <sonar.exclusions>**.js</sonar.exclusions>
         <skipLiquibaseRun>true</skipLiquibaseRun>
-        <choerodon.starters.version>0.11.0.RELEASE</choerodon.starters.version>
+        <choerodon.starters.version>0.11.1.RELEASE</choerodon.starters.version>
     </properties>
 
     <dependencyManagement>
@@ -91,122 +91,122 @@
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-security-standard</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-cxf-ws</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-security-ldap</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-security-cas</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- hap front html -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-front-html</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- hap front kendo -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-front-kendo</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- hap -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- core -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-core</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- job -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-job</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- oauth2 -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-oauth2</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- gateway -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-gateway</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- interface -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-interface</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- task -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-task</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- report -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-report</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- mail -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-mail</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- workflow -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-workflow</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <!-- attachment -->
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-attachment</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>hap-modeling</artifactId>
-                <version>4.0.0-RELEASE</version>
+                <version>4.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
@@ -221,22 +221,7 @@
             </dependency>
             <dependency>
                 <groupId>io.choerodon</groupId>
-                <artifactId>choerodon-starter-boot</artifactId>
-                <version>${choerodon.starters.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.choerodon</groupId>
-                <artifactId>choerodon-fnd-util-api</artifactId>
-                <version>${choerodon.starters.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.choerodon</groupId>
                 <artifactId>choerodon-fnd-util</artifactId>
-                <version>${choerodon.starters.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.choerodon</groupId>
-                <artifactId>choerodon-fnd-excel-api</artifactId>
                 <version>${choerodon.starters.version}</version>
             </dependency>
             <dependency>
@@ -247,11 +232,6 @@
             <dependency>
                 <groupId>io.choerodon</groupId>
                 <artifactId>choerodon-starter-mybatis</artifactId>
-                <version>${choerodon.starters.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.choerodon</groupId>
-                <artifactId>choerodon-dataset-api</artifactId>
                 <version>${choerodon.starters.version}</version>
             </dependency>
             <dependency>
@@ -730,7 +710,7 @@
             <plugin>
                 <groupId>io.choerodon</groupId>
                 <artifactId>choerodon-maven-plugin</artifactId>
-                <version>0.11.0.RELEASE</version>
+                <version>0.11.1.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>

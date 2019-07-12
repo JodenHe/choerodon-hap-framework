@@ -1,6 +1,7 @@
 package io.choerodon.hap.adaptor.impl;
 
 import com.google.common.base.Throwables;
+import io.choerodon.base.util.BaseConstants;
 import io.choerodon.hap.account.dto.User;
 import io.choerodon.hap.account.exception.RoleException;
 import io.choerodon.hap.account.exception.UserException;
@@ -12,14 +13,11 @@ import io.choerodon.hap.iam.app.service.ChoerodonRoleService;
 import io.choerodon.hap.iam.app.service.RoleMemberService;
 import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import io.choerodon.hap.iam.infra.enums.MemberType;
-import io.choerodon.hap.security.IUserSecurityStrategy;
 import io.choerodon.hap.security.TokenUtils;
 import io.choerodon.hap.security.captcha.ICaptchaManager;
-import io.choerodon.hap.security.service.impl.UserSecurityStrategyManager;
 import io.choerodon.hap.system.controllers.sys.SysConfigController;
 import io.choerodon.hap.system.dto.SysConfig;
 import io.choerodon.hap.system.dto.SystemInfo;
-import io.choerodon.base.util.BaseConstants;
 import io.choerodon.redis.Cache;
 import io.choerodon.web.core.IRequest;
 import io.choerodon.web.dto.ResponseData;
@@ -50,7 +48,8 @@ import java.util.UUID;
  * 默认登陆代理类.
  *
  * @author njq.niu@hand-china.com
- * @author xiawang.liu@hand-china.com 2016年1月19日 TODO:URL和页面分开
+ * @author xiawang.liu@hand-china.com
+ * @since 2016年1月19日
  */
 public class DefaultLoginAdaptor implements ILoginAdaptor {
     private static final Logger logger = LoggerFactory.getLogger(DefaultLoginAdaptor.class);
@@ -100,13 +99,8 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
     @Qualifier("configCache")
     private Cache configCache;
 
-
     @Autowired
     private SysConfigManager sysConfigManager;
-
-    @Autowired
-    private UserSecurityStrategyManager userSecurityStrategyManager;
-
 
     public ModelAndView doLogin(User user, HttpServletRequest request, HttpServletResponse response) {
 
@@ -277,57 +271,6 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
      */
     public IUserService getUserService() {
         return userService;
-    }
-
-    @Override
-    public ModelAndView indexView(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        ModelAndView mav = indexModelAndView(request, response);
-        if (session != null) {
-            // 获取user
-            String userName = (String) session.getAttribute(User.FIELD_USER_NAME);
-            Long userId = (Long) session.getAttribute(User.FIELD_USER_ID);
-            if (userName != null) {
-                if (session.getAttribute(User.LOGIN_CHANGE_INDEX) != null) {
-                    User user = userService.selectByUserName(userName);
-                    List<IUserSecurityStrategy> userSecurityStrategies = userSecurityStrategyManager.getUserSecurityStrategyList();
-                    for (IUserSecurityStrategy userSecurityStrategy : userSecurityStrategies) {
-                        ModelAndView mv = userSecurityStrategy.loginVerifyStrategy(user, request);
-                        if (mv != null) {
-                            return mv;
-                        }
-                    }
-                    session.removeAttribute(User.LOGIN_CHANGE_INDEX);
-                }
-            } else {
-                return new ModelAndView(BaseConstants.VIEW_REDIRECT + getLoginView(request));
-            }
-            // 角色选择
-            if (!sysConfigManager.getRoleMergeFlag()) {
-                Long roleId = (Long) session.getAttribute(IRequest.FIELD_ROLE_ID);
-                // 用户没有登录进入选择角色界面，否则直接进入系统
-                if (roleId == null) {
-                    return new ModelAndView(BaseConstants.VIEW_REDIRECT + getRoleView(request));
-                }
-                List<RoleDTO> roles = roleService.selectEnableRolesInfoByMemberIdAndMemberType(userId, MemberType.USER.value());
-                mav.addObject("SYS_USER_ROLES", roles);
-                mav.addObject("CURRENT_USER_ROLE", roleId);
-            }
-        }
-
-        mav.addObject("SYS_TITLE", HtmlUtils.htmlEscape(sysConfigManager.getSysTitle()));
-        return mav;
-    }
-
-    /**
-     * 默认登陆页面.
-     *
-     * @param request  HttpServletRequest
-     * @param response HttpServletResponse
-     * @return 视图
-     */
-    public ModelAndView indexModelAndView(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView("index");
     }
 
     @Override

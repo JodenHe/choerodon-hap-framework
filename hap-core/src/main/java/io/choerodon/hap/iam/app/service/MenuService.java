@@ -19,7 +19,7 @@ public interface MenuService {
      * @param sourceId site和user都为0
      * @return 菜单DTO
      */
-    MenuDTO menus(String code, Long sourceId);
+    MenuDTO menus(String code, Long sourceId) throws MenuException;
 
     /**
      * 菜单配置界面根据层级查询树形菜单，菜单下包含权限信息.
@@ -27,7 +27,7 @@ public interface MenuService {
      * @param code 顶级菜单编码
      * @return 菜单DTO
      */
-    MenuDTO menuConfig(String code);
+    MenuDTO menuConfig(String code) throws MenuException;
 
     /**
      * 保存对应层级菜单配置(根据前端传入的树形菜单，更新后端的树形结构).

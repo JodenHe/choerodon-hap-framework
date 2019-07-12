@@ -111,18 +111,23 @@ export default class MenuSetting extends Component {
     type = type || typeState;
     const newPrevMenuGroup = prevMenuGroup;
     this.setState({ loading: true });
-    axios.get(`/v1/menus/menu_config?code=choerodon.code.top.${type}`)
+    axios.get(`/v1/menus/menu_config?code=CHOERODON.CODE.TOP.${type.toUpperCase()}`)
       .then((res) => {
-        const value = res.subMenus;
-        menuGroup[type] = normalizeMenus(value);
-        newPrevMenuGroup[type] = JSON.parse(JSON.stringify(menuGroup))[type];
-        this.copy = JSON.parse(JSON.stringify(menuGroup))[type];
-        // 深拷贝
-        this.setState({
-          menuGroup,
-          loading: false,
-          prevMenuGroup: newPrevMenuGroup,
-        });
+        if (res.success === false) {
+          Choerodon.handleResponseError(res.message);
+          this.setState({ loading: false });
+        } else {
+          const value = res.subMenus;
+          menuGroup[type] = normalizeMenus(value);
+          newPrevMenuGroup[type] = JSON.parse(JSON.stringify(menuGroup))[type];
+          this.copy = JSON.parse(JSON.stringify(menuGroup))[type];
+          // 深拷贝
+          this.setState({
+            menuGroup,
+            loading: false,
+            prevMenuGroup: newPrevMenuGroup,
+          });
+        }
       })
       .catch((error) => {
         Choerodon.handleResponseError(error);
@@ -213,8 +218,8 @@ export default class MenuSetting extends Component {
     } else {
       axios.post('/v1/menus/check', JSON.stringify({ code: value, level: type, type: 'menu' }))
         .then((mes) => {
-          if (mes.failed) {
-            callback(errorMsg);
+          if (mes.success === false) {
+            callback(mes.message);
           } else {
             callback();
           }
@@ -235,7 +240,7 @@ export default class MenuSetting extends Component {
       tempDirs.splice(index, 1);
     }
     deleteNode(menuGroup[type], record);
-    this.deleteCopy = this.deleteCopy.push(record);
+    this.deleteCopy.push(record);
     this.setState({
       menuGroup,
       tempDirs,
@@ -289,7 +294,7 @@ export default class MenuSetting extends Component {
               default: false,
               level: type,
               type: 'menu',
-              parentCode: `choerodon.code.top.${type}`,
+              parentCode: `choerodon.code.top.${type}`.toUpperCase(),
               subMenus: null,
             };
             defineLevel(menu, 0);
@@ -442,7 +447,7 @@ export default class MenuSetting extends Component {
         whitespace: true,
         message: intl.formatMessage({ id: `${intlPrefix}.directory.code.require` }),
       }, {
-        pattern: /^[a-z]([-.a-z0-9]*[a-z0-9])?$/,
+        pattern: /^[a-zA-Z]([-.a-z0-9A-Z]*[a-zA-Z0-9])?$/,
         message: intl.formatMessage({ id: `${intlPrefix}.directory.code.pattern` }),
       }, {
         validator: this.checkCode,
@@ -625,7 +630,7 @@ export default class MenuSetting extends Component {
         /* eslint-disable-next-line */
         normalizeMenus([dragData], record.__level__, record.name);
       } else {
-        const { parent, index, parentData: { code = `choerodon.code.top.${type}`, __level__, name } = {} } = findParent(menuData, record);
+        const { parent, index, parentData: { code = `CHOERODON.CODE.TOP.${type.toUpperCase()}`, __level__, name } = {} } = findParent(menuData, record);
         dragData.parentCode = code;
         parent.splice(index + (currentDropSide === 'after' ? 1 : 0), 0, dragData);
         normalizeMenus([dragData], __level__, name);
@@ -670,13 +675,13 @@ export default class MenuSetting extends Component {
     }
   }
 
-  checkStatus = (menu, index, origins) => {
+  checkStatus = (menu, index, origins, topMenuSign) => {
     const originMenu = origins.find(v => v.id === menu.id);
     if (!originMenu) {
       // eslint-disable-next-line no-underscore-dangle
       menu.__status = 'add';
     } else {
-      menu.sort = 10 * (index + 1);
+      menu.sort = topMenuSign ? index : 10 * (index + 1);
       if (!(menu.sort === originMenu.sort && menu.parentCode === originMenu.parentCode)) {
         // eslint-disable-next-line no-underscore-dangle
         menu.__status = 'update';
@@ -693,7 +698,7 @@ export default class MenuSetting extends Component {
 
     const { type, menuGroup } = this.state;
     const currents = menuGroup[type];
-    currents.forEach((m, i) => this.checkStatus(m, i, origins));
+    currents.forEach((m, i) => this.checkStatus(m, i, origins, true));
     
     const deleteArr = this.deleteCopy;
     deleteArr.forEach(v => v.__status = 'delete');
@@ -710,7 +715,7 @@ export default class MenuSetting extends Component {
     if (JSON.stringify(prevMenuGroup) !== JSON.stringify(menuGroup)) {
       this.setState({ submitting: true });
       const afterAddStatus = this.handleStatus();
-      axios.post(`/v1/menus/menu_config?code=choerodon.code.top.${type}`, JSON.stringify(adjustSort(afterAddStatus)))
+      axios.post(`/v1/menus/menu_config?code=CHOERODON.CODE.TOP.${type.toUpperCase()}`, JSON.stringify(adjustSort(afterAddStatus)))
         .then((menus) => {
           this.setState({ submitting: false });
           if (menus.failed) {

@@ -19,6 +19,9 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EMPTY;
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EXISTED;
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NOT_EXISTED;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_UPDATE;
 
@@ -70,6 +73,7 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public RoleDTO create(RoleDTO role) throws ChoerodonRoleException {
         RoleValidator.insertOrUpdateCheck(role);
         role.setBuiltIn(false);
@@ -85,29 +89,29 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
 
     }
 
-    @Transactional(rollbackFor = ChoerodonRoleException.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public RoleDTO update(RoleDTO roleDTO) throws ChoerodonRoleException {
         RoleValidator.insertOrUpdateCheck(roleDTO);
         RoleDTO role = roleMapper.selectByPrimaryKey(roleDTO);
         if (role == null) {
             throw new ChoerodonRoleException(ERROR_ROLE_NOT_EXISTED, roleDTO.getName());
         }
-        //内置的角色不允许更新字段，只能更新label
         if (role.getBuiltIn()) {
-            return roleDTO;
-        } else {
-            if (roleMapper.updateByPrimaryKeySelective(role) != 1) {
-                throw new ChoerodonRoleException(ERROR_ROLE_UPDATE);
-            }
-            role.setPermissions(roleDTO.getPermissions());
-            //维护role_permission关系
-            updateRolePermission(role);
-            return role;
+            throw new ChoerodonRoleException(ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE, roleDTO.getName());
         }
+        role.setName(roleDTO.getName());
+        role.setDescription(roleDTO.getDescription());
+        if (roleMapper.updateByPrimaryKeySelective(role) != 1) {
+            throw new ChoerodonRoleException(ERROR_ROLE_UPDATE);
+        }
+        role.setPermissions(roleDTO.getPermissions());
+        updateRolePermission(role);
+        return role;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws ChoerodonRoleException {
         RoleDTO roleDTO = roleAssertHelper.roleNotExisted(id);
         roleAssertHelper.roleIsBuiltIn(roleDTO.getBuiltIn());
@@ -117,36 +121,27 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public RoleDTO enableRole(Long id) throws ChoerodonRoleException {
         return disableOrEnableRole(id, true);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public RoleDTO disableRole(Long id) throws ChoerodonRoleException {
         return disableOrEnableRole(id, false);
     }
 
     @Override
     public void check(RoleDTO role) throws ChoerodonRoleException {
-        Boolean checkCode = !StringUtils.isEmpty(role.getCode());
-        if (!checkCode) {
-            throw new ChoerodonRoleException("error.role.code.empty");
+        if (StringUtils.isEmpty(role.getCode())) {
+            throw new ChoerodonRoleException(ERROR_ROLE_CODE_EMPTY);
         }
-        Boolean createCheck = StringUtils.isEmpty(role.getId());
-        RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setCode(role.getCode());
-        if (createCheck) {
-            Boolean existed = roleMapper.selectOne(roleDTO) != null;
-            if (existed) {
-                throw new ChoerodonRoleException("error.role.code.exist");
-            }
-        } else {
-            Long id = role.getId();
-            RoleDTO roleDTO1 = roleMapper.selectOne(roleDTO);
-            Boolean existed = roleDTO1 != null && !id.equals(roleDTO1.getId());
-            if (existed) {
-                throw new ChoerodonRoleException("error.role.code.exist");
-            }
+        RoleDTO dto = new RoleDTO();
+        dto.setCode(role.getCode());
+        Boolean existed = roleMapper.selectOne(dto) != null;
+        if (existed) {
+            throw new ChoerodonRoleException(ERROR_ROLE_CODE_EXISTED);
         }
     }
 

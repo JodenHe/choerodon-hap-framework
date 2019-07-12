@@ -5,7 +5,7 @@
     <parent>
         <artifactId>hap-parent</artifactId>
         <groupId>io.choerodon</groupId>
-        <version>4.0.0-RELEASE</version>
+        <version>4.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hap</artifactId>
@@ -77,10 +77,6 @@
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-fnd-excel</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-boot</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -89,7 +85,7 @@
             <plugin>
                 <groupId>io.choerodon</groupId>
                 <artifactId>choerodon-maven-plugin</artifactId>
-                <version>0.11.0.RELEASE</version>
+                <version>0.11.1.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>

@@ -25,7 +25,7 @@ function getLevelNameProps({ record }) {
 function getLevelObjProps({ record }) {
   const value = record.get('levelId');
   if (value === '10') {
-    return { type: 'object', label: $l('profilevalue.levelvalue'), required: true };
+    return { type: 'object', label: $l('profilevalue.levelvalue') };
   } else if (value === '20') {
     return { type: 'object', label: $l('profilevalue.levelvalue'), required: true, lovCode: 'LOV_ROLE', textField: 'name' };
   } else if (value === '30') {

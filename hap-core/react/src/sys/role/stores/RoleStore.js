@@ -411,7 +411,7 @@ class RoleStore {
     });
   }
 
-  loadMenu = level => axios.get(`/v1/menus/menu_config?code=choerodon.code.top.${level}`);
+  loadMenu = level => axios.get(`/v1/menus/menu_config?code=CHOERODON.CODE.TOP.${level.toUpperCase()}`);
 }
 
 const roleStore = new RoleStore();

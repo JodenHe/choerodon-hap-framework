@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 /**
  * @author superlee
@@ -19,7 +18,6 @@ public class RolePermissionDTO extends BaseDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long roleId;
-    @NotEmpty(message = "error.rolePermission.permissionId.empty")
     private Long permissionId;
 
     public Long getId() {

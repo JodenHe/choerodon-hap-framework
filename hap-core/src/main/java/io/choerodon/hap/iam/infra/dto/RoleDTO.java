@@ -16,6 +16,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EMPTY;
+import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NAME_EMPTY;
+
 /**
  * @author superlee
  * @since 2019-04-15
@@ -28,18 +31,17 @@ public class RoleDTO extends BaseDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "error.role.name.empty")
+    @NotEmpty(message = ERROR_ROLE_NAME_EMPTY)
     @Size(min = 1, max = 64)
     @MultiLanguageField
     private String name;
 
-    @NotEmpty(message = "error.role.code.empty")
+    @NotEmpty(message = ERROR_ROLE_CODE_EMPTY)
     @Size(min = 1, max = 128)
     private String code;
 
     private String description;
 
-    @NotEmpty(message = "error.role.level.empty")
     @JsonProperty(value = "level")
     private String resourceLevel;
 

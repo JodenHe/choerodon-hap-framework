@@ -1,12 +1,10 @@
 package io.choerodon.hap.security.permission.service.impl;
 
-import io.choerodon.hap.security.permission.dto.DataPermissionRuleAssign;
-import io.choerodon.hap.security.permission.mapper.DatasetMapper;
-import io.choerodon.hap.security.permission.service.IDataPermissionRuleAssignService;
 import io.choerodon.base.annotation.Dataset;
 import io.choerodon.dataset.exception.DatasetException;
 import io.choerodon.dataset.service.IDatasetService;
-import io.choerodon.fnd.util.service.ILovService;
+import io.choerodon.hap.security.permission.dto.DataPermissionRuleAssign;
+import io.choerodon.hap.security.permission.service.IDataPermissionRuleAssignService;
 import io.choerodon.message.IMessagePublisher;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.mybatis.service.BaseServiceImpl;
@@ -26,12 +24,7 @@ import java.util.Map;
 public class DataPermissionRuleAssignServiceImpl extends BaseServiceImpl<DataPermissionRuleAssign> implements IDataPermissionRuleAssignService, IDatasetService<DataPermissionRuleAssign> {
 
     @Autowired
-    private ILovService lovService;
-    @Autowired
-    private DatasetMapper datasetMapper;
-
-    @Autowired
-    IMessagePublisher iMessagePublisher;
+    private IMessagePublisher iMessagePublisher;
 
     @Override
     public List<DataPermissionRuleAssign> selectRuleAssign(DataPermissionRuleAssign dto, int page,
@@ -64,7 +57,7 @@ public class DataPermissionRuleAssignServiceImpl extends BaseServiceImpl<DataPer
             DataPermissionRuleAssign example = new DataPermissionRuleAssign();
             BeanUtils.populate(example, body);
             return selectOptions(example, null, page, pageSize);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new DatasetException("dataset.error", e);
         }
     }
@@ -72,8 +65,8 @@ public class DataPermissionRuleAssignServiceImpl extends BaseServiceImpl<DataPer
     @Override
     public List<DataPermissionRuleAssign> mutations(List<DataPermissionRuleAssign> objs) {
         batchUpdate(objs);
-        for (DataPermissionRuleAssign assign : objs){
-            switch (assign.get__status()){
+        for (DataPermissionRuleAssign assign : objs) {
+            switch (assign.get__status()) {
                 case BaseDTO.STATUS_ADD:
                 case BaseDTO.STATUS_UPDATE:
                 case BaseDTO.STATUS_DELETE:

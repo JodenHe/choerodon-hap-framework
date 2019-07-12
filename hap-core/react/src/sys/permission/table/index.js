@@ -8,7 +8,11 @@ import RuleEditDataSet from './stores/RuleEditDataSet';
 const { Column } = Table;
 
 function insertSelectEditor(record) {
-  return record.status === 'add' ? <Select /> : null;
+  return record.status === 'add' ? <Select searchable /> : null;
+}
+
+function tableFieldSelectEditor(record) {
+  return record.get('tableField') === '_PERMISSION_CUSTOM_SQL' ? null : <Select searchable />;
 }
 
 const ruleEditModalKey = Modal.key();
@@ -21,6 +25,14 @@ export default class Index extends Component {
 
   ruleEditModal;
 
+  ruleOnChange(value, oldValue, form) {
+    if (value && value.permissionField === '_PERMISSION_CUSTOM_SQL') {
+      this.ruleDS.current.set('tableField', '_PERMISSION_CUSTOM_SQL');
+    } else {
+      this.ruleDS.current.set('tableField', null);
+    }
+  }
+
   handleRuleEditSave(tableRecord) {
     const { tableId, tableName } = tableRecord.data;
     this.ruleDS.data.forEach((record) => {
@@ -28,6 +40,15 @@ export default class Index extends Component {
       record.set('tableName', tableName);
     });
     this.ruleDS.submit();
+  }
+
+  handleRuleEditDelete(tableRecord) {
+    const { tableId, tableName } = tableRecord.data;
+    this.ruleDS.data.forEach((record) => {
+      record.set('tableId', tableId);
+      record.set('tableName', tableName);
+    });
+    this.ruleDS.delete(this.ruleDS.selected);
   }
 
   async openRuleEditModal(tableRecord) {
@@ -50,11 +71,11 @@ export default class Index extends Component {
           buttons={[
             'add',
             <Button funcType="flat" icon="save" color="blue" onClick={() => this.handleRuleEditSave(tableRecord)}>{$l('hap.save')}</Button>,
-            'delete',
+            <Button funcType="flat" icon="delete" color="blue" onClick={() => this.handleRuleEditDelete(tableRecord)}>{$l('hap.delete')}</Button>,
           ]}
         >
-          <Column name="rule" editor={<Lov />} />
-          <Column name="tableField" editor={<Select />} />
+          <Column name="rule" editor={<Lov onChange={(value, oldValue, form) => this.ruleOnChange(value, oldValue, form)} />} />
+          <Column name="tableField" editor={tableFieldSelectEditor} />
         </Table>
       ),
     });

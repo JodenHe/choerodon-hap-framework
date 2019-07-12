@@ -1,5 +1,6 @@
 package io.choerodon.hap.iam.app.service.impl;
 
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.hap.account.dto.User;
 import io.choerodon.hap.account.exception.RoleException;
 import io.choerodon.hap.account.exception.UserException;
@@ -10,7 +11,6 @@ import io.choerodon.hap.iam.exception.MemberRoleException;
 import io.choerodon.hap.iam.infra.dto.MemberRoleDTO;
 import io.choerodon.hap.iam.infra.enums.MemberType;
 import io.choerodon.hap.iam.infra.mapper.MemberRoleMapper;
-import io.choerodon.base.enums.ResourceType;
 import io.choerodon.mybatis.service.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -54,6 +54,30 @@ public class RoleMemberServiceImpl extends BaseServiceImpl<MemberRoleDTO> implem
         return memberRoleDTOS;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllUserRoles(RoleAssignmentDeleteDTO roleAssignmentDeleteDTO) throws MemberRoleException {
+        if (roleAssignmentDeleteDTO != null && roleAssignmentDeleteDTO.getData() != null) {
+            Map<Long, List<Long>> data = roleAssignmentDeleteDTO.getData();
+            for (Map.Entry<Long, List<Long>> entry : data.entrySet()) {
+                Long userId = entry.getKey();
+                List<Long> roleIds = entry.getValue();
+                if (CollectionUtils.isNotEmpty(roleIds)) {
+                    for (Long roleId : roleIds) {
+                        deleteUserRoles(userId, roleId);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void checkUserRoleExists(Long userId, Long roleId) throws RoleException {
+        if (memberRoleMapper.selectCountByMemberIdAndRoleId(userId, roleId) != 1) {
+            throw new RoleException(RoleException.MSG_INVALID_USER_ROLE, RoleException.MSG_INVALID_USER_ROLE, null);
+        }
+    }
+
     private List<MemberRoleDTO> saveUserRolesByMemberId(Long memberId, List<MemberRoleDTO> memberRoles) throws UserException, MemberRoleException {
         List<MemberRoleDTO> resultList = new ArrayList<>();
         User user = new User();
@@ -78,30 +102,6 @@ public class RoleMemberServiceImpl extends BaseServiceImpl<MemberRoleDTO> implem
             }
         }
         return resultList;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteAllUserRoles(RoleAssignmentDeleteDTO roleAssignmentDeleteDTO) throws MemberRoleException {
-        if (roleAssignmentDeleteDTO != null && roleAssignmentDeleteDTO.getData() != null) {
-            Map<Long, List<Long>> data = roleAssignmentDeleteDTO.getData();
-            for (Map.Entry<Long, List<Long>> entry : data.entrySet()) {
-                Long userId = entry.getKey();
-                List<Long> roleIds = entry.getValue();
-                if (CollectionUtils.isNotEmpty(roleIds)) {
-                    for (Long roleId : roleIds) {
-                        deleteUserRoles(userId, roleId);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void checkUserRoleExists(Long userId, Long roleId) throws RoleException {
-        if (memberRoleMapper.selectCountByMemberIdAndRoleId(userId, roleId) != 1) {
-            throw new RoleException(RoleException.MSG_INVALID_USER_ROLE, RoleException.MSG_INVALID_USER_ROLE, null);
-        }
     }
 
     /**

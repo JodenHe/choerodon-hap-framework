@@ -80,18 +80,6 @@ public class LoginController extends BaseController implements InitializingBean 
     }
 
     @Permission(type = ResourceType.SITE, permissionLogin = true)
-    @GetMapping(value = "/index.html")
-    public ModelAndView indexHtml(final HttpServletRequest request, final HttpServletResponse response) {
-        return getLoginAdaptor().indexView(request, response);
-    }
-
-    @Permission(type = ResourceType.SITE, permissionLogin = true)
-    @GetMapping(value = "/")
-    public ModelAndView indexView(final HttpServletRequest request, final HttpServletResponse response) {
-        return getLoginAdaptor().indexView(request, response);
-    }
-
-    @Permission(type = ResourceType.SITE, permissionLogin = true)
     @PostMapping(value = "/role")
     public ModelAndView selectRole(final RoleDTO role, final HttpServletRequest request,
                                    final HttpServletResponse response) throws RoleException {

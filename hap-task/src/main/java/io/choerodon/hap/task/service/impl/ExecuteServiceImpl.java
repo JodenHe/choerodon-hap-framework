@@ -1,10 +1,10 @@
 package io.choerodon.hap.task.service.impl;
 
 import com.github.pagehelper.util.StringUtil;
-import io.choerodon.hap.core.AppContextInitListener;
 import io.choerodon.base.annotation.Dataset;
 import io.choerodon.dataset.exception.DatasetException;
 import io.choerodon.dataset.service.IDatasetService;
+import io.choerodon.hap.core.AppContextInitListener;
 import io.choerodon.hap.message.TaskListenerContainer;
 import io.choerodon.hap.task.TaskConstants;
 import io.choerodon.hap.task.dto.TaskDetail;
@@ -21,6 +21,8 @@ import io.choerodon.hap.task.service.ITaskDetailService;
 import io.choerodon.hap.task.service.ITaskExecutionService;
 import io.choerodon.web.core.impl.RequestHelper;
 import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -49,6 +51,8 @@ import java.util.concurrent.RejectedExecutionException;
 @Dataset("TaskExecute")
 public class ExecuteServiceImpl implements IExecuteService, AppContextInitListener, IDatasetService<TaskExecution> {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExecuteServiceImpl.class);
+
     @Autowired
     private ThreadPoolTaskExecutor taskExecutor;
 
@@ -73,7 +77,7 @@ public class ExecuteServiceImpl implements IExecuteService, AppContextInitListen
         try {
             taskExecutor.execute(taskThread);
         } catch (RejectedExecutionException e) {
-            //任务被线程池拒绝，修改执行记录状态
+            // 任务被线程池拒绝，修改执行记录状态
 
             // 当前执行的任务组或任务状态改为未执行
             taskExecutionService.updateStatus(taskDataInfo.getExecutionId(), TaskConstants.EXECUTION_UN_EXECUTED);
@@ -109,7 +113,7 @@ public class ExecuteServiceImpl implements IExecuteService, AppContextInitListen
 
             execute(taskDataInfo);
 
-            //tomcat shutdown 不再执行以下代码
+            // tomcat shutdown 不再执行以下代码
             if (!TaskListenerContainer.running) {
                 if (isSuccess && !thread.isInterrupted()) {
                     transactionManager.commit(status);
@@ -137,9 +141,9 @@ public class ExecuteServiceImpl implements IExecuteService, AppContextInitListen
                     if (!isSuccess || Thread.currentThread().isInterrupted()) {
                         return;
                     }
-                    //设置当前执行的子任务序号
+                    // 设置当前执行的子任务序号
                     taskDataInfo.setCurrentExecution(i);
-                    //设置当前执行的子任务
+                    // 设置当前执行的子任务
                     taskDataInfo.setCurrentTask(taskDataInfo.getTaskDatas().get(i));
                     executeTask(taskDataInfo);
                 }
@@ -164,22 +168,27 @@ public class ExecuteServiceImpl implements IExecuteService, AppContextInitListen
                     });
                 }
 
-                //写入执行结果路径
+                // 写入执行结果路径
                 if (StringUtil.isNotEmpty(executeResultPath)) {
                     TaskExecution taskExecution = new TaskExecution();
-                    taskExecution.setExecuteResultPath(executeResultPath);
-                    if (taskDataInfo.getType().equals(TaskConstants.TASK_TYPE_TASK)) {
+                    if (TaskConstants.TASK_TYPE_TASK.equals(taskDataInfo.getType())) {
                         taskExecution.setExecutionId(taskDataInfo.getExecutionId());
                     } else {
                         taskExecution.setExecutionId(taskDataInfo.getCurrentTask().getExecutionId());
                     }
-                    taskExecutionService.updateByPrimaryKeySelective(taskExecution);
+                    TaskExecution updateTaskExecution = taskExecutionService.selectByPrimaryKey(taskExecution);
+                    if (updateTaskExecution == null) {
+                        logger.error("Task execution for {} does not exist!", taskExecution.getExecutionId());
+                    } else {
+                        updateTaskExecution.setExecuteResultPath(executeResultPath);
+                        taskExecutionService.updateByPrimaryKeySelective(updateTaskExecution);
+                    }
                 }
 
             } catch (TaskInterruptException e) {
-                //线程在非阻塞时被中断
+                // 线程在非阻塞时被中断
             } catch (InterruptedException e) {
-                //线程在阻塞时被中断，中断标志重置，这里需要恢复中断状态
+                // 线程在阻塞时被中断，中断标志重置，这里需要恢复中断状态
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
                 isSuccess = false;
@@ -187,7 +196,7 @@ public class ExecuteServiceImpl implements IExecuteService, AppContextInitListen
                     executeListener.doException(e, taskDataInfo);
                 });
             } finally {
-                //执行实现类重新排序，用户实现类先执行，系统默认实现最后执行
+                // 执行实现类重新排序，用户实现类先执行，系统默认实现最后执行
                 executeListeners.sort((a, b) -> b.getOrder() - a.getOrder());
                 executeListeners.forEach(executeListener -> {
                     executeListener.doFinally(taskDataInfo);

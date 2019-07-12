@@ -6,6 +6,7 @@ import io.choerodon.hap.iam.infra.mapper.RolePermissionMapper;
 import io.choerodon.mybatis.service.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class RolePermissionServiceImpl extends BaseServiceImpl<RolePermissionDTO
     private RolePermissionMapper rolePermissionMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByRoleId(Long roleId) {
         RolePermissionDTO rolePermissionDTO = new RolePermissionDTO();
         rolePermissionDTO.setRoleId(roleId);

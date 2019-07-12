@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecuteListener implements IExecuteListener {
 
-    private final Logger logger = LoggerFactory.getLogger(ExecuteListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecuteListener.class);
 
     public static final int ORDER = 1;
 
@@ -127,7 +127,7 @@ public class ExecuteListener implements IExecuteListener {
         // 保存执行失败错误信息
         TaskExecutionDetail taskExecutionDetail = iTaskExecutionDetailService.selectByExecutionId(taskData.getExecutionId());
         if (taskExecutionDetail == null) {
-            logger.error("{} of task execution detail is not existed!", taskData.getExecutionId());
+            logger.error("Task execution detail for {} does not exist!", taskData.getExecutionId());
             return;
         }
         taskExecutionDetail.setStacktrace(Throwables.getStackTraceAsString(Throwables.getRootCause(e)));

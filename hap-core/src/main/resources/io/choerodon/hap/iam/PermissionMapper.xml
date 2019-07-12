@@ -10,28 +10,38 @@
     </resultMap>
 
     <select id="checkPermission" resultType="String">
-        SELECT DISTINCT
-        p.CODE
-        FROM
-        iam_permission p
-        left JOIN iam_role_permission rp ON rp.permission_id = p.id
-        left JOIN iam_role r ON r.id = rp.role_id
-        left JOIN iam_member_role mu ON mu.role_id = r.id
-        WHERE
-        (p.is_login_access=1 OR p.is_public_access=1 OR (
-        p.resource_level = #{source_type}
-        AND member_type = 'user'
-        AND member_id = #{member_id}
-        AND source_type = #{source_type}
-        AND source_id = #{source_id}
-        AND r.is_enabled = 1
-        ))
-        <if test="codes != null and !codes.isEmpty()">
-            AND p.CODE IN
-            <foreach collection="codes" item="item" index="index" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
+        select distinct t2.code
+        from
+        ( select ip.code
+        from iam_permission ip
+        inner join iam_role_permission irp on ip.id = irp.permission_id
+        inner join (
+        select distinct imr.role_id
+        from iam_member_role imr
+        inner join iam_role ir
+        on imr.role_id = ir.id
+        and ir.is_enabled = 1
+        and imr.member_type = 'user'
+        where imr.member_id = #{memberId}
+        and imr.role_id in
+        <foreach collection="memberRoleIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ) t1
+        on t1.role_id = irp.role_id
+        union
+        select ip1.code
+        from iam_permission ip1
+        where ip1.is_login_access = 1
+        or ip1.is_public_access = 1) t2
+        <where>
+            <if test="codes != null and !codes.isEmpty()">
+                and t2.code in
+                <foreach collection="codes" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="selectByRoleId" resultMap="PermissionDTO">

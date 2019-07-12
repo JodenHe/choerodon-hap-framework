@@ -12,7 +12,6 @@ public class MenuException extends BaseException {
 
     private static final long serialVersionUID = 1L;
 
-
     /**
      * 目录编码为空.
      */
@@ -24,7 +23,7 @@ public class MenuException extends BaseException {
     public static final String ERROR_MENU_NAME_EMPTY = "error.menu.name.empty";
 
     /**
-     * 图标为空.
+     * 目录图标为空.
      */
     public static final String ERROR_MENU_ICON_EMPTY = "error.menu.icon.empty";
     /**
@@ -43,7 +42,18 @@ public class MenuException extends BaseException {
      * 顶级菜单不存在.
      */
     public static final String ERROR_MENU_TOP_NOT_EXISTED = "error.menu.top.not.existed";
-
+    /**
+     * 只有自设目录可以删除.
+     */
+    public static final String ERROR_MENU_NOT_SELF = "error.menu.not.self";
+    /**
+     * 菜单下有叶子节点，不能删除.
+     */
+    public static final String ERROR_MENU_HAVE_CHILDREN = "error.menu.have.children";
+    /**
+     * 菜单不存在.
+     */
+    public static final String ERROR_MENU_NOT_EXISTED = "error.menu.not.existed";
 
     public MenuException(String code, Object... parameters) {
         super(code, code, parameters);

@@ -1,12 +1,13 @@
 package io.choerodon.hap.iam.app.service.impl;
 
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.hap.iam.api.dto.CheckPermissionDTO;
 import io.choerodon.hap.iam.app.service.PermissionService;
 import io.choerodon.hap.iam.infra.dto.PermissionDTO;
 import io.choerodon.hap.iam.infra.mapper.PermissionMapper;
-import io.choerodon.base.enums.ResourceType;
 import io.choerodon.web.core.IRequest;
 import io.choerodon.web.core.impl.RequestHelper;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -28,13 +29,14 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<CheckPermissionDTO> checkPermission(List<CheckPermissionDTO> checkPermissionDTOList) {
-        IRequest details = RequestHelper.getCurrentRequest();
-        if (details == null) {
+        IRequest request = RequestHelper.getCurrentRequest();
+        if (request == null || ArrayUtils.isEmpty(request.getAllRoleId())) {
             checkPermissionDTOList.forEach(i -> i.setApprove(false));
             return checkPermissionDTOList;
         }
-        Long userId = details.getUserId();
-        Set<String> resultCodes = new HashSet<>(checkSitePermission(checkPermissionDTOList, userId));
+        Long userId = request.getUserId();
+        Long[] memberRoleIds = request.getAllRoleId();
+        Set<String> resultCodes = new HashSet<>(checkSitePermission(checkPermissionDTOList, userId, memberRoleIds));
         checkPermissionDTOList.forEach(p -> {
             p.setApprove(false);
             if (resultCodes.contains(p.getCode())) {
@@ -42,12 +44,6 @@ public class PermissionServiceImpl implements PermissionService {
             }
         });
         return checkPermissionDTOList;
-    }
-
-    private Set<String> checkSitePermission(final List<CheckPermissionDTO> checkPermissionDTOList, final Long userId) {
-        Set<String> siteCodes = checkPermissionDTOList.stream().filter(i -> ResourceType.SITE.value().equals(i.getResourceType()))
-                .map(CheckPermissionDTO::getCode).collect(Collectors.toSet());
-        return permissionMapper.checkPermission(userId, ResourceType.SITE.value(), 0L, siteCodes);
     }
 
     @Override
@@ -58,5 +54,11 @@ public class PermissionServiceImpl implements PermissionService {
             permissions.addAll(permissionList);
         });
         return permissions;
+    }
+
+    private Set<String> checkSitePermission(final List<CheckPermissionDTO> checkPermissionDTOList, Long userId, final Long[] memberRoleIds) {
+        Set<String> siteCodes = checkPermissionDTOList.stream().filter(i -> ResourceType.SITE.value().equals(i.getResourceType()))
+                .map(CheckPermissionDTO::getCode).collect(Collectors.toSet());
+        return permissionMapper.checkPermission(siteCodes, userId, memberRoleIds);
     }
 }

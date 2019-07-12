@@ -29,17 +29,13 @@ public class ChoerodonRoleException extends BaseException {
      */
     public static final String ERROR_ROLE_CODE_EXISTED = " error.role.code.existed";
     /**
-     * 角色code长度不合法，请不要超过128个字符.
+     * 角色编码长度不合法，请不要超过128个字符.
      */
     public static final String ERROR_ROLE_CODE_LENGTH = "error.role.code.length";
     /**
-     * 角色编码不合法.
-     */
-    public static final String ERROR_ROLE_CODE_REGULAR_ILLEGAL = "error.role.code.regular.illegal";
-    /**
      * 该角色没有一个菜单，请至少选择一个菜单.
      */
-    public static final String ERROR_ROLE_PERMISSION_EMPTY = "error.role_permission.empty";
+    public static final String ERROR_ROLE_PERMISSION_EMPTY = "error.role.permission.empty";
     /**
      * 角色名称为空.
      */
@@ -49,9 +45,13 @@ public class ChoerodonRoleException extends BaseException {
      */
     public static final String ERROR_ROLE_NAME_LENGTH = "error.role.name.length";
     /**
-     * 角色不允许被删除
+     * 内置角色不允许被删除.
      */
     public static final String ERROR_ROLE_NOT_ALLOW_TO_BE_DELETE = "error.role.not.allow.to.be.delete";
+    /**
+     * 内置角色不允许被更新.
+     */
+    public static final String ERROR_ROLE_NOT_ALLOW_TO_BE_UPDATE = "error.role.not.allow.to.be.update";
 
 
     public ChoerodonRoleException(String code, Object... parameters) {

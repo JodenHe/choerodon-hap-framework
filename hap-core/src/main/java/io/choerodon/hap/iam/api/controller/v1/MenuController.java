@@ -1,10 +1,10 @@
 package io.choerodon.hap.iam.api.controller.v1;
 
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.hap.iam.app.service.MenuService;
 import io.choerodon.hap.iam.exception.MenuException;
 import io.choerodon.hap.iam.infra.dto.MenuDTO;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
 import io.choerodon.web.controller.BaseController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ public class MenuController extends BaseController {
     @Permission(type = ResourceType.SITE, permissionLogin = true)
     @GetMapping
     public ResponseEntity<MenuDTO> menus(@RequestParam String code,
-                                         @RequestParam(name = "source_id", defaultValue = "0") Long sourceId) {
+                                         @RequestParam(name = "source_id", defaultValue = "0") Long sourceId) throws MenuException {
         return new ResponseEntity<>(menuService.menus(code, sourceId), HttpStatus.OK);
     }
 
@@ -56,7 +56,7 @@ public class MenuController extends BaseController {
      */
     @Permission
     @GetMapping("/menu_config")
-    public ResponseEntity<MenuDTO> menuConfig(@RequestParam String code) {
+    public ResponseEntity<MenuDTO> menuConfig(@RequestParam String code) throws MenuException {
         return new ResponseEntity<>(menuService.menuConfig(code), HttpStatus.OK);
     }
 

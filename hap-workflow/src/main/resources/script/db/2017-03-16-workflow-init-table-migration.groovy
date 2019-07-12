@@ -175,10 +175,9 @@ databaseChangeLog(logicalFilePath: "2017-03-16-init-table-migration.groovy") {
 
 databaseChangeLog(logicalFilePath: "patch.groovy") {
 
-
     changeSet(author: "qixiangyu", id: "201707011-act_exception") {
         if (helper.isOracle()) {
-            modifyDataType(tableName: "ACT_EXCEPTION", columnName: "PROC_ID", newDataType: "NVARCHAR(255)")
+            modifyDataType(tableName: "ACT_EXCEPTION", columnName: "PROC_ID", newDataType: "VARCHAR(64)")
         }
     }
 

@@ -15,6 +15,7 @@ import RoleStore from '../stores/RoleStore';
 
 const { TabPane } = Tabs;
 const FormItem = Form.Item;
+const { TextArea } = Input;
 const intlPrefix = 'global.role';
 const LEVEL_NAME = {
   site: '全局层',
@@ -178,6 +179,7 @@ export default class CreateRole extends Component {
     const { isEdit } = this;
     if (isEdit) {
       callback();
+      return;
     }
     const params = { code: value };
     axios.post('/v1/roles/check', JSON.stringify(params)).then((mes) => {
@@ -243,26 +245,30 @@ export default class CreateRole extends Component {
         const role = {
           name: this.props.form.getFieldValue('name').trim(),
           code: this.props.form.getFieldValue('code').trim(),
+          description: this.props.form.getFieldValue('description').trim(),
           level: this.level,
           permissions: RoleStore.selectedPermissions.slice().map(p => ({ id: p })),
           objectVersionNumber: RoleStore.roleMsg.objectVersionNumber,
         };
         const { intl } = this.props;
+        if (!role.permissions || !role.permissions.length) {
+          Choerodon.prompt('该角色没有一个权限，请至少选择一个权限');
+          return;
+        }
         if (this.isEdit) {
           RoleStore.editRoleByid(this.roleId, role)
             .then((data) => {
-              if (!data.failed) {
+              if (!data.failed && data.id) {
                 Choerodon.prompt(intl.formatMessage({ id: 'modify.success' }));
                 this.linkToChange('/hap-core/role');
               } else {
-                Choerodon.prompt(data.message);
+                Choerodon.prompt(data.message || '保存失败');
               }
+            })
+            .catch((error) => {
+              Choerodon.prompt(error || '保存失败');
             });
         } else {
-          if (!role.permissions || !role.permissions.length) {
-            Choerodon.prompt('该角色没有一个权限，请至少选择一个权限');
-            return;
-          }
           RoleStore.createRole(role)
             .then((data) => {
               if (data && data.id) {
@@ -402,6 +408,17 @@ export default class CreateRole extends Component {
               maxLength={64}
               showLengthInfo={false}
               disabled={isDefault}
+            />,
+          )}
+        </FormItem>
+        <FormItem {...formItemLayout} style={{ width: 512 }}>
+          {getFieldDecorator('description', {
+            initialValue: isEdit ? RoleStore.roleMsg.description : undefined,
+          })(
+            <TextArea
+              autoComplete="off"
+              label="描述"
+              style={{ width: 512 }}
             />,
           )}
         </FormItem>

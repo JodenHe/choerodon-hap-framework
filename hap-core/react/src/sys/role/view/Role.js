@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import get from 'lodash/get';
 import { withRouter } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { Button, Form, Table } from 'choerodon-ui';
+import { Button, Form, Table, Tooltip } from 'choerodon-ui';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Action, ContentPro as Content, Dropdown, Header, Page } from '@choerodon/boot';
 import RoleStore from '../stores/RoleStore';
@@ -181,16 +181,28 @@ export default class Role extends Component {
       title: <FormattedMessage id="name" />,
       dataIndex: 'name',
       key: 'name',
-      width: '25%',
+      width: '20%',
       filters: [],
       filteredValue: filters.name || [],
     }, {
       title: <FormattedMessage id="code" />,
       dataIndex: 'code',
       key: 'code',
-      width: '25%',
+      width: '20%',
       filters: [],
       filteredValue: filters.code || [],
+    }, {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      width: '25%',
+      render: text => (
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 20, width: 280 }}>
+          <Tooltip title={text} placement="topLeft">
+            {text}
+          </Tooltip>
+        </div>
+      ),
     }, {
       title: <FormattedMessage id="source" />,
       dataIndex: 'builtIn',

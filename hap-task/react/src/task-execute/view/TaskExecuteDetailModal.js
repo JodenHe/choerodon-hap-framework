@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import { get, observable, set } from 'mobx';
 import { observer } from 'mobx-react';
 import { $l, axios } from '@choerodon/boot';
-import { Button, DataSet, DatePicker, Form, Lov, Modal, Select, Spin, Stores, TextField, message } from 'choerodon-ui/pro';
+import { Button, DataSet, DatePicker, Form, Lov, message, Modal, Select, Spin, Stores, TextField } from 'choerodon-ui/pro';
 import _ from 'lodash';
+import moment from 'moment';
 import TaskDetailModal from '../../execution/view/TaskDetailModal';
 import GroupModal from '../../execution/view/GroupModal';
 import ExecutionDataSet from '../../execution/stores/ExecutionDataSet';
@@ -77,6 +77,19 @@ export default class TaskExecuteDetailModal extends PureComponent {
     }
   }
 
+  /**
+   * 将extraAttribute json字符串转换为json对象
+   * @param extraAttribute extraAttribute json字符串
+   * @returns {*|{}} extraAttribute json对象
+   */
+  getExtraAttribute(extraAttribute) {
+    let result = extraAttribute || {};
+    if (typeof (result) === 'string') {
+      result = JSON.parse(result) || {};
+    }
+    return result;
+  }
+
   getDataset(data, configs) {
     const { display } = data;
     let defaultValue = data.defaultValue || '';
@@ -85,11 +98,10 @@ export default class TaskExecuteDetailModal extends PureComponent {
     const { sourceCode } = data;
     const { title } = data;
     const { sourceType } = data;
-    const extraAttribute = this.isNotEmpty(data.extraAttribute) ? JSON.parse(data.extraAttribute) : {};
+    const extraAttribute = this.getExtraAttribute(data.extraAttribute);
     const { cascadeFrom, cascadeFromField, codeValueField } = extraAttribute;
 
     const required = data.required === 'Y';
-    const readOnly = data.readOnly === 'Y';
     if (display === 'multiSelect') {
       defaultValue = this.isNotEmpty(defaultValue) ? defaultValue : null;
       const field = {
@@ -97,7 +109,6 @@ export default class TaskExecuteDetailModal extends PureComponent {
         label: title,
         defaultValue,
         required,
-        readOnly,
         multiple: ',',
       };
       if (sourceType === 'LOV') {
@@ -115,7 +126,6 @@ export default class TaskExecuteDetailModal extends PureComponent {
         label: title,
         defaultValue,
         required,
-        readOnly,
       };
       if (sourceType === 'LOV') {
         field.lovCode = sourceCode;
@@ -139,7 +149,6 @@ export default class TaskExecuteDetailModal extends PureComponent {
           type: 'string',
           defaultValue,
           required,
-          readOnly,
         });
       this.ds.create();
     } else if (display === 'LOV') {
@@ -155,7 +164,6 @@ export default class TaskExecuteDetailModal extends PureComponent {
           label: title,
           type: 'object',
           required,
-          readOnly,
           lovCode: sourceCode,
           textField: config.textField,
           defaultValue: defaultValueObj,
@@ -168,7 +176,6 @@ export default class TaskExecuteDetailModal extends PureComponent {
         type: 'string',
         defaultValue,
         required,
-        readOnly,
       });
       this.ds.create();
     }
@@ -242,36 +249,80 @@ export default class TaskExecuteDetailModal extends PureComponent {
   }
 
   /**
+   * 控制可选日期最大值.
+   * @returns {*|moment.Moment}
+   */
+  setDatePickerFromMax(datePickerTo) {
+    if (datePickerTo) {
+      return moment(datePickerTo);
+    }
+  }
+
+  /**
+   * 控制可选日期最小值.
+   * @returns {*|moment.Moment}
+   */
+  setDatePickerToMin(datePickerFrom) {
+    if (datePickerFrom) {
+      return moment(datePickerFrom);
+    }
+  }
+
+  /**
    * 按列渲染控件
    * @param row
    * @returns {*}
    */
   renderCmp(data) {
     const { display } = data;
-    const extraAttribute = JSON.parse(data.extraAttribute);
-    const datePickerFrom = this.translateDate(extraAttribute.datePickerFrom);
-    const datePickerTo = this.translateDate(extraAttribute.datePickerTo);
+    const extraAttribute = this.getExtraAttribute(data.extraAttribute);
+    const datePickerFrom = extraAttribute.datePickerFrom || '';
+    const datePickerTo = extraAttribute.datePickerTo || '';
     const { tableFieldName } = data;
 
     if (display === 'multiSelect') {
       return (
-        <Select multiple name={tableFieldName} />
+        <Select
+          multiple
+          key={tableFieldName}
+          name={tableFieldName}
+          disabled={data.readOnly === 'Y'}
+        />
       );
     } else if (display === 'comboBox') {
       return (
-        <Select name={tableFieldName} />
+        <Select
+          key={tableFieldName}
+          name={tableFieldName}
+          disabled={data.readOnly === 'Y'}
+        />
       );
     } else if (display === 'textBox') {
       return (
-        <TextField name={tableFieldName} maxLength={data.dataLength} />
+        <TextField
+          key={tableFieldName}
+          name={tableFieldName}
+          maxLength={data.dataLength}
+          disabled={data.readOnly === 'Y'}
+        />
       );
     } else if (display === 'LOV') {
       return (
-        <Lov name={tableFieldName} />
+        <Lov
+          key={tableFieldName}
+          name={tableFieldName}
+          disabled={data.readOnly === 'Y'}
+        />
       );
     } else if (display === 'datePicker') {
       return (
-        <DatePicker name={tableFieldName} min={datePickerFrom} max={datePickerTo} />
+        <DatePicker
+          key={tableFieldName}
+          name={tableFieldName}
+          min={this.setDatePickerToMin(datePickerFrom)}
+          max={this.setDatePickerFromMax(datePickerTo)}
+          disabled={data.readOnly === 'Y'}
+        />
       );
     }
   }
@@ -461,13 +512,13 @@ export default class TaskExecuteDetailModal extends PureComponent {
     this.props.modal.close();
     axios.post('/sys/task/detail/execute', this.setData(), {
       headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        'X-Requested-With': 'XMLHttpRequest',
+      },
     })
       .then((args) => {
-        if(args.success === false){
-          message.error(args.message.substring(0, 40))
-          return
+        if (args.success === false) {
+          message.error(args.message.substring(0, 40));
+          return;
         }
         Modal.confirm({
           title: $l('hap.prompt'),

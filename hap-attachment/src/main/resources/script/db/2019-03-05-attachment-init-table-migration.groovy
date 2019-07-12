@@ -156,4 +156,10 @@ databaseChangeLog(logicalFilePath: "patch.groovy") {
             sqlFile(path: helper.dataPath("script/db/data/hana/patch/20171012-1265.sql"), encoding: "UTF-8")
         }
     }
+
+    if (helper.isPostgresql() || helper.isHana()) {
+        changeSet(author: "qixiangyu", id: "20180208-sys-attachment-1-fix") {
+            dropIndex(tableName: "SYS_ATTACHMENT", indexName: "SYS_ATTACHMENT_N2")
+        }
+    }
 }

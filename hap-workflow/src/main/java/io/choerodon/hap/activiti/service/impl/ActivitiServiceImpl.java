@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Throwables;
+import io.choerodon.base.annotation.Dataset;
+import io.choerodon.dataset.service.IDatasetService;
 import io.choerodon.hap.activiti.components.ActivitiMultiLanguageManager;
 import io.choerodon.hap.activiti.core.IActivitiConstants;
 import io.choerodon.hap.activiti.custom.ForecastActivityCmd;
@@ -36,8 +38,6 @@ import io.choerodon.hap.activiti.service.IActivitiEntityService;
 import io.choerodon.hap.activiti.service.IActivitiService;
 import io.choerodon.hap.activiti.service.IApproveChainHeaderService;
 import io.choerodon.hap.activiti.util.ActivitiUtils;
-import io.choerodon.base.annotation.Dataset;
-import io.choerodon.dataset.service.IDatasetService;
 import io.choerodon.hap.hr.dto.Employee;
 import io.choerodon.hap.hr.service.IEmployeeService;
 import io.choerodon.message.IMessagePublisher;
@@ -1509,8 +1509,7 @@ public class ActivitiServiceImpl implements IActivitiService, IActivitiConstants
     @Override
     public List<ActiviException> queryException(ActiviException exception, int page, int pagesize) {
         PageHelper.startPage(page, pagesize);
-        List<ActiviException> list = exceptionMapper.selectAllException(exception);
-        return list;
+        return exceptionMapper.selectAllException(exception);
     }
 
     @Override

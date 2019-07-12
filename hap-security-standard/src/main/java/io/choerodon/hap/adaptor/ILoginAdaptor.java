@@ -1,9 +1,9 @@
 package io.choerodon.hap.adaptor;
 
+import io.choerodon.base.exception.BaseException;
 import io.choerodon.hap.account.dto.User;
 import io.choerodon.hap.account.exception.RoleException;
 import io.choerodon.hap.iam.infra.dto.RoleDTO;
-import io.choerodon.base.exception.BaseException;
 import io.choerodon.web.dto.ResponseData;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,15 +41,6 @@ public interface ILoginAdaptor {
      * @throws RoleException 角色异常
      */
     ModelAndView doSelectRole(RoleDTO role, HttpServletRequest request, HttpServletResponse response) throws RoleException;
-
-    /**
-     * 显示主界面.
-     *
-     * @param request  HttpServletRequest
-     * @param response HttpServletResponse
-     * @return view
-     */
-    ModelAndView indexView(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 登陆界面.

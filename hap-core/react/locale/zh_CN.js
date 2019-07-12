@@ -774,7 +774,7 @@ const zh_CN = {
   'global.menusetting.icon.require': '请选择一个图标',
   'global.menusetting.directory.name.require': '请输入目录名称',
   'global.menusetting.directory.code.require': '请输入目录编码',
-  'global.menusetting.directory.code.pattern': '编码只能由小写字母、数字、"-"组成，且以小写字母开头，不能以"-"结尾',
+  'global.menusetting.directory.code.pattern': '编码只能由字母、数字、"-"组成，且以字母开头，不能以"-"结尾',
   'global.menusetting.directory.code.onlymsg': '目录编码已存在，请输入其他目录编码',
   'global.menusetting.modify.org': '修改目录',
   'global.menusetting.delete.success': '删除成功，请点击保存',

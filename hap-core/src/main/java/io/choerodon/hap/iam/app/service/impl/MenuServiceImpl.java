@@ -1,5 +1,6 @@
 package io.choerodon.hap.iam.app.service.impl;
 
+import io.choerodon.base.enums.MenuType;
 import io.choerodon.hap.iam.api.validator.MenuValidator;
 import io.choerodon.hap.iam.app.service.MenuService;
 import io.choerodon.hap.iam.exception.MenuException;
@@ -7,8 +8,6 @@ import io.choerodon.hap.iam.infra.asserts.asserts.MenuAssertHelper;
 import io.choerodon.hap.iam.infra.dto.MenuDTO;
 import io.choerodon.hap.iam.infra.mapper.MenuMapper;
 import io.choerodon.hap.security.PermissionVoter;
-import io.choerodon.base.enums.MenuType;
-import io.choerodon.base.exception.BaseRuntimeException;
 import io.choerodon.web.core.IRequest;
 import io.choerodon.web.core.impl.RequestHelper;
 import org.apache.commons.collections.CollectionUtils;
@@ -51,7 +50,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDTO menus(String code, Long sourceId) {
+    public MenuDTO menus(String code, Long sourceId) throws MenuException {
         MenuDTO topMenu = getTopMenuByCode(code);
         String level = topMenu.getResourceLevel();
         IRequest request = RequestHelper.getCurrentRequest();
@@ -71,7 +70,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDTO menuConfig(String code) {
+    public MenuDTO menuConfig(String code) throws MenuException {
         MenuDTO menu = getTopMenuByCode(code);
         String level = menu.getResourceLevel();
         Set<MenuDTO> menus = new HashSet<>(menuMapper.selectMenusWithPermission(level));
@@ -79,8 +78,8 @@ public class MenuServiceImpl implements MenuService {
         return menu;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveMenuConfig(String code, List<MenuDTO> menus) throws MenuException {
         MenuDTO topMenu = getTopMenuByCode(code);
         String level = topMenu.getResourceLevel();
@@ -113,21 +112,14 @@ public class MenuServiceImpl implements MenuService {
         }
         MenuDTO dto = new MenuDTO();
         dto.setCode(menu.getCode());
-        if (menu.getId() == null) {
-            if (!menuMapper.select(dto).isEmpty()) {
-                throw new MenuException(ERROR_MENU_CODE_EXISTED);
-            }
-        } else {
-            Long id = menu.getId();
-            MenuDTO menuDTO = menuMapper.selectOne(dto);
-            Boolean existed = menuDTO != null && !id.equals(menuDTO.getId());
-            if (existed) {
-                throw new MenuException(ERROR_MENU_CODE_EXISTED);
-            }
+        Boolean existed = menuMapper.selectOne(dto) != null;
+        if (existed) {
+            throw new MenuException(ERROR_MENU_CODE_EXISTED);
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws MenuException {
         MenuDTO dto = menuAssertHelper.menuNotExisted(id);
         if (dto.getDefault()) {
@@ -142,12 +134,12 @@ public class MenuServiceImpl implements MenuService {
      * @param code 顶级菜单编码
      * @return 顶级菜单
      */
-    private MenuDTO getTopMenuByCode(String code) {
+    private MenuDTO getTopMenuByCode(String code) throws MenuException {
         MenuDTO dto = new MenuDTO();
         dto.setCode(code);
         MenuDTO menu = menuMapper.selectOne(dto);
         if (menu == null) {
-            throw new BaseRuntimeException(ERROR_MENU_TOP_NOT_EXISTED);
+            throw new MenuException(ERROR_MENU_TOP_NOT_EXISTED);
         }
         return menu;
     }
@@ -225,6 +217,7 @@ public class MenuServiceImpl implements MenuService {
      */
     private void insertMenu(MenuDTO insertMenu, String level) throws MenuException {
         MenuValidator.insertValidate(insertMenu, level);
+        menuAssertHelper.codeExisted(insertMenu.getCode());
         menuMapper.insertSelective(insertMenu);
     }
 

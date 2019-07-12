@@ -64,6 +64,7 @@
                 )
             </if>
         </where>
+        order by r.id desc
     </select>
 
     <select id="selectEnableRoleIdsByMemberIdAndMemberType" resultType="long">
@@ -106,7 +107,7 @@
         <if test="name!=null">
             and irt.name like concat('%',concat(#{name},'%'))
         </if>
-        order by ir.id asc
+        order by ir.id desc
     </select>
 
     <select id="selectRolesNotAssignToUser" parameterType="io.choerodon.hap.iam.infra.dto.RoleDTO" resultMap="RoleDTO">
@@ -133,7 +134,7 @@
         <if test="name!=null">
             and irt.name like concat('%',concat(#{name},'%'))
         </if>
-        order by ir.id asc
+        order by ir.id desc
     </select>
 
     <select id="selectRolesAssignToUserByUserId" resultMap="RoleDTO">

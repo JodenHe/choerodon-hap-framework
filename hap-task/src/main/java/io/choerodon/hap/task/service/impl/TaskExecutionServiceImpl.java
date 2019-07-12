@@ -5,13 +5,13 @@ import io.choerodon.base.annotation.Dataset;
 import io.choerodon.dataset.exception.DatasetException;
 import io.choerodon.dataset.service.IDatasetService;
 import io.choerodon.hap.message.components.TaskCancel;
+import io.choerodon.hap.task.ExecuteLogConvertStrategy;
+import io.choerodon.hap.task.TaskConstants;
 import io.choerodon.hap.task.dto.TaskExecution;
 import io.choerodon.hap.task.mapper.TaskExecutionMapper;
 import io.choerodon.hap.task.service.ITaskExecutionService;
-import io.choerodon.mybatis.service.BaseServiceImpl;
-import io.choerodon.hap.task.ExecuteLogConvertStrategy;
-import io.choerodon.hap.task.TaskConstants;
 import io.choerodon.message.IMessagePublisher;
+import io.choerodon.mybatis.service.BaseServiceImpl;
 import io.choerodon.web.core.IRequest;
 import io.choerodon.web.core.impl.RequestHelper;
 import org.apache.commons.beanutils.BeanUtils;
@@ -41,7 +41,7 @@ public class TaskExecutionServiceImpl extends BaseServiceImpl<TaskExecution>
     @Autowired
     private IMessagePublisher messagePublisher;
 
-    @Value("${task.execute.logConvert.class:DefaultExecuteLogConvert}")
+    @Value("${task.execute.logConvert.class:io.choerodon.hap.task.service.impl.DefaultExecuteLogConvert}")
     private String logConvertClass;
 
     @Override
@@ -106,7 +106,7 @@ public class TaskExecutionServiceImpl extends BaseServiceImpl<TaskExecution>
             ExecuteLogConvertStrategy executeLogConvertStrategy = (ExecuteLogConvertStrategy) Class.forName(logConvertClass).newInstance();
             logString = executeLogConvertStrategy.convertLog(taskExecution);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to execute log download!", e);
         }
         return logString;
 

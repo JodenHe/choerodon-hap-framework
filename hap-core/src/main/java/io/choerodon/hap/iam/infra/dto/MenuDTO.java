@@ -10,9 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Objects;
+
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_CODE_EMPTY;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_ICON_EMPTY;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_NAME_EMPTY;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_PARENT_CODE_EMPTY;
 
 /**
  * @author superlee
@@ -22,29 +26,24 @@ import java.util.Objects;
 @Table(name = "iam_menu_b")
 public class MenuDTO extends BaseDTO {
 
-    private static final String CODE_REGULAR_EXPRESSION = "^[a-z]([-.a-z0-9]*[a-z0-9])$";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "error.menu.code.empty")
-    @Pattern(regexp = CODE_REGULAR_EXPRESSION, message = "error.menu.code.illegal")
+    @NotEmpty(message = ERROR_MENU_CODE_EMPTY)
     private String code;
     @MultiLanguageField
-    @NotEmpty(message = "error.menu.name.empty")
+    @NotEmpty(message = ERROR_MENU_NAME_EMPTY)
     private String name;
     private String pagePermissionCode;
-    @NotEmpty(message = "error.menu.parentCode.null")
+    @NotEmpty(message = ERROR_MENU_PARENT_CODE_EMPTY)
     private String parentCode;
-    @NotEmpty(message = "error.menu.resourceLevel.empty")
     private String resourceLevel;
-    @NotEmpty(message = "error.menu.type.empty")
     private String type;
     @NotEmpty
     private String serviceCode;
     private Integer sort;
     private Boolean isDefault;
-    @NotEmpty(message = "error.menu.icon.empty")
+    @NotEmpty(message = ERROR_MENU_ICON_EMPTY)
     private String icon;
     private String category;
     private String searchCondition;

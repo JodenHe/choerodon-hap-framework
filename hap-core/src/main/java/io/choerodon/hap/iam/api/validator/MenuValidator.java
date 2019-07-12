@@ -1,14 +1,17 @@
 package io.choerodon.hap.iam.api.validator;
 
+import io.choerodon.base.enums.MenuType;
 import io.choerodon.hap.iam.exception.MenuException;
 import io.choerodon.hap.iam.infra.dto.MenuDTO;
-import io.choerodon.base.enums.MenuType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_CODE_EMPTY;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_DEFAULT;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_HAVE_CHILDREN;
 import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_ICON_EMPTY;
 import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_NAME_EMPTY;
+import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_NOT_SELF;
 import static io.choerodon.hap.iam.exception.MenuException.ERROR_MENU_PARENT_CODE_EMPTY;
 
 /**
@@ -57,13 +60,13 @@ public class MenuValidator {
      */
     public static void deleteValidate(MenuDTO menu) throws MenuException {
         if (menu.getDefault()) {
-            throw new MenuException("error.menu.default");
+            throw new MenuException(ERROR_MENU_DEFAULT);
         }
         if (!MenuType.isMenu(menu.getType())) {
-            throw new MenuException("error.menu.not.self", menu.getName());
+            throw new MenuException(ERROR_MENU_NOT_SELF, menu.getName());
         }
         if (!CollectionUtils.isEmpty(menu.getSubMenus())) {
-            throw new MenuException("error.menu.have.children", menu.getName());
+            throw new MenuException(ERROR_MENU_HAVE_CHILDREN, menu.getName());
         }
     }
 }

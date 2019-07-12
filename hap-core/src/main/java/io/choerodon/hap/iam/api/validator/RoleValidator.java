@@ -6,12 +6,9 @@ import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_EMPTY;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_LENGTH;
-import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_CODE_REGULAR_ILLEGAL;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NAME_EMPTY;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_NAME_LENGTH;
 import static io.choerodon.hap.iam.exception.ChoerodonRoleException.ERROR_ROLE_PERMISSION_EMPTY;
@@ -43,7 +40,6 @@ public class RoleValidator {
      * 创建或更新角色时，校验角色编码.
      * 校验编码不能为空
      * 校验编码长度不能超过128
-     * 校验编码合法性 只能是字母开头、包含字母或数字
      *
      * @param code 角色编码
      * @throws ChoerodonRoleException 角色编码异常
@@ -54,14 +50,6 @@ public class RoleValidator {
         }
         if (code.length() > 128) {
             throw new ChoerodonRoleException(ERROR_ROLE_CODE_LENGTH);
-        }
-        String[] codes = code.split("/");
-        String lastCode = codes[codes.length - 1];
-        Pattern p = Pattern.compile("^[a-z]([-a-z0-9]*[a-z0-9])$");
-        Matcher m = p.matcher(lastCode);
-        boolean isCheck = m.matches();
-        if (!isCheck) {
-            throw new ChoerodonRoleException(ERROR_ROLE_CODE_REGULAR_ILLEGAL);
         }
     }
 

@@ -189,7 +189,7 @@ public class DataPermissionCacheContainer {
             Map ruleDetail = (Map) rules.get(maskRange);
             if (ruleDetail.containsKey(maskRangeValue)) {
                 List ruleAssign = (List) ruleDetail.get(maskRangeValue);
-                if (ruleAssign.isEmpty()) {
+                if (!ruleAssign.isEmpty()) {
                     return ruleAssign;
                 }
             }

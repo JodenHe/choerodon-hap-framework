@@ -4,22 +4,22 @@
 <mapper namespace="io.choerodon.hap.activiti.exception.mapper.ActiviExceptionMapper">
     <resultMap id="BaseResultMap" type="io.choerodon.hap.activiti.exception.dto.ActiviException">
         <result column="ID" property="id" jdbcType="BIGINT"/>
-        <result column="PROC_ID" property="procId" />
-        <result column="MESSAGE" property="message" />
-        <result column="DUEDATE" property="duedate" />
+        <result column="PROC_ID" property="procId" jdbcType="VARCHAR"/>
+        <result column="MESSAGE" property="message"/>
+        <result column="DUEDATE" property="duedate" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <select id="selectAllException" resultMap="BaseResultMap"
             parameterType="io.choerodon.hap.activiti.exception.dto.ActiviException">
         SELECT X.PROC_ID , X.MESSAGE ,X.DUEDATE, P.NAME_ PROCDEFNAME
         FROM(
-            SELECT PROC_ID , MESSAGE ,DUEDATE
-            FROM ACT_EXCEPTION
-            UNION ALL (
-            SELECT J.PROCESS_INSTANCE_ID_,B.BYTES_,J.DUEDATE_
-            FROM ACT_RU_DEADLETTER_JOB J,ACT_GE_BYTEARRAY B
-            WHERE J.EXCEPTION_STACK_ID_=B.ID_
-            )) X ,ACT_RE_PROCDEF P,ACT_HI_PROCINST O
+        SELECT PROC_ID , MESSAGE ,DUEDATE
+        FROM ACT_EXCEPTION
+        UNION ALL (
+        SELECT J.PROCESS_INSTANCE_ID_,B.BYTES_,J.DUEDATE_
+        FROM ACT_RU_DEADLETTER_JOB J,ACT_GE_BYTEARRAY B
+        WHERE J.EXCEPTION_STACK_ID_=B.ID_
+        )) X ,ACT_RE_PROCDEF P,ACT_HI_PROCINST O
         <where>
             X.PROC_ID=O.ID_ AND O.PROC_DEF_ID_=P.ID_
             <if test="procId !=null ">

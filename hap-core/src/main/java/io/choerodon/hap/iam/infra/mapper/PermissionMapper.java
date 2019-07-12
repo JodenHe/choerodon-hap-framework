@@ -11,8 +11,8 @@ import java.util.Set;
  * @author wuguokai
  */
 public interface PermissionMapper extends Mapper<PermissionDTO> {
-    Set<String> checkPermission(@Param("member_id") Long memberId, @Param("source_type") String sourceType,
-                                @Param("source_id") Long sourceId, @Param("codes") Set<String> codes);
+    Set<String> checkPermission(@Param("codes") Set<String> codes, @Param("memberId") Long memberid, @Param("memberRoleIds") Long[] memberRoleIds);
+
     List<PermissionDTO> selectByRoleId(@Param("roleId") Long roleId,
                                        @Param("params") String params);
 
