@@ -1,15 +1,12 @@
 package io.choerodon.hap.security.permission.dto;
 
-import io.choerodon.mybatis.common.query.Where;
-import io.choerodon.mybatis.entity.BaseDTO;
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
+import io.choerodon.mybatis.common.query.Where;
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * @author jialong.zuo@hand-china.com
@@ -22,23 +19,20 @@ public class DataPermissionRule extends BaseDTO {
     public static final String FIELD_RULE_NAME = "ruleName";
     public static final String FIELD_PERMISSION_FIELD = "permissionField";
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ruleId;
 
-    //屏蔽规则code
     @NotEmpty
     @Length(max = 250)
+    @Where
     private String ruleCode;
 
-    //屏蔽规则NAME
     @NotEmpty
     @Length(max = 250)
     @Where
     private String ruleName;
 
-    //安全性字段
     @NotEmpty
     @Length(max = 100)
     private String permissionField;

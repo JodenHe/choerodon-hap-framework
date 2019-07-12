@@ -22,5 +22,6 @@ export default {
   ],
   queryFields: [
     { name: 'tableName', type: 'string', label: $l('datapermissiontable.tablename') },
+    { name: 'description', type: 'string', label: $l('hap.description') },
   ],
 };

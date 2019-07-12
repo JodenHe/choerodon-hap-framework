@@ -4,11 +4,21 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import io.choerodon.base.util.BaseConstants;
-import io.choerodon.hap.message.profile.SystemConfigListener;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
+
+import io.choerodon.base.util.BaseConstants;
+import io.choerodon.hap.message.profile.SystemConfigListener;
+import io.choerodon.hap.system.controllers.sys.SysConfigController;
+import io.choerodon.hap.system.dto.SysConfig;
+import io.choerodon.hap.system.dto.SystemInfo;
+import io.choerodon.redis.Cache;
 
 /**
  * 系统配置.
@@ -19,6 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SysConfigManager implements SystemConfigListener, BaseConstants {
+    private static final Logger logger = LoggerFactory.getLogger(SysConfigManager.class);
 
     public static final String SYS_LOGO_VERSION = "sysLogoVersion";
     public static final String SYS_FAVICON_VERSION = "sysFaviconVersion";
@@ -64,6 +75,10 @@ public class SysConfigManager implements SystemConfigListener, BaseConstants {
     private int oauth2AuthenticationNum = 3;
 
     private long oauth2AuthenticationLockTime = 10 * 60;
+
+    @Autowired
+    @Qualifier("configCache")
+    private Cache configCache;
 
     /**
      * 是否在登录的时候设置敏感Cookie的Secure属性.
@@ -136,4 +151,31 @@ public class SysConfigManager implements SystemConfigListener, BaseConstants {
         }
     }
 
+    /**
+     * 获取系统信息，包括系统标题、系统图标以及网站图标.
+     *
+     * @return 系统信息
+     */
+    public SystemInfo getSystemInfo() {
+        SystemInfo systemInfo = new SystemInfo();
+        SysConfig logo = (SysConfig) configCache.getValue(SysConfigController.SYS_LOGO_CONFIG_CODE);
+        SysConfig favicon = (SysConfig) configCache.getValue(SysConfigController.SYS_FAVICON_CONFIG_CODE);
+        SysConfig title = (SysConfig) configCache.getValue(SysConfigController.SYS_TITLE);
+        if (logo == null) {
+            logger.warn("System logo is null");
+        } else {
+            systemInfo.setLogoImageSrc(logo.getConfigValue());
+        }
+        if (favicon == null) {
+            logger.warn("System favicon is null");
+        } else {
+            systemInfo.setFaviconImageSrc(favicon.getConfigValue());
+        }
+        if (title == null) {
+            logger.warn("System title is null");
+        } else {
+            systemInfo.setTitle(HtmlUtils.htmlEscape(title.getConfigValue()));
+        }
+        return systemInfo;
+    }
 }

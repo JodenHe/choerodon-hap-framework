@@ -141,7 +141,7 @@ export default class MemberRoleType {
   loadMemberDatas({ pageSize: size, current }, { userName, realName, userRoles }, params) {
     const body = {
       userName: userName && userName[0],
-      userRoles: userRoles && userRoles[0],
+      roleName: userRoles && userRoles[0],
       param: params && params.length ? params : undefined,
     };
     const queryObj = { size, page: current };

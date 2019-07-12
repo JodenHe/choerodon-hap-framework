@@ -19,13 +19,14 @@ export default class Index extends Component {
   componentDidMount() {
     const { AppState } = this.props;
     const userInfoObj = AppState.getUserInfo;
-    const { userId, userName, email, phone, token } = userInfoObj;
+    const { userId, userName, email, phone, token, objectVersionNumber } = userInfoObj;
     const userInfoObjFilterd = {
       userId,
       userName,
       email,
       phone,
       _token: token,
+      objectVersionNumber,
     };
     this.ds.loadData([userInfoObjFilterd]);
   }
@@ -47,7 +48,9 @@ export default class Index extends Component {
       const res = await axios.post('/sys/user/update', current.toJSONData());
       if (res && res.success) {
         message.success('修改个人信息成功');
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         message.error(res.message || res.code);
       }

@@ -1,13 +1,15 @@
 package io.choerodon.hap.security.permission.dto;
 
-import io.choerodon.mybatis.entity.BaseDTO;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
+import io.choerodon.mybatis.common.query.Where;
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * @author jialong.zuo@hand-china.com
@@ -23,13 +25,13 @@ public class DataPermissionTable extends BaseDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tableId;
 
-    //MANGE 表名
     @NotEmpty
     @Length(max = 250)
+    @Where
     private String tableName;
 
-    //描述
     @Length(max = 250)
+    @Where
     private String description;
 
     public void setTableId(Long tableId) {

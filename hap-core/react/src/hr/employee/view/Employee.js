@@ -31,8 +31,9 @@ export default ({ employeeAssignDataSet, employeeDataSet, selfRoleDataSet, userD
         await employeeDataSet.query();
         return true;
       }
+    } else {
+      return false;
     }
-    return false;
   }
 
   /**

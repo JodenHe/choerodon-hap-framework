@@ -1,5 +1,16 @@
 package io.choerodon.hap.security.permission.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import io.choerodon.base.annotation.Dataset;
+import io.choerodon.dataset.exception.DatasetException;
+import io.choerodon.dataset.service.IDatasetService;
 import io.choerodon.hap.security.permission.dto.DataPermissionRule;
 import io.choerodon.hap.security.permission.dto.DataPermissionRuleDetail;
 import io.choerodon.hap.security.permission.dto.DataPermissionTableRule;
@@ -9,20 +20,13 @@ import io.choerodon.hap.security.permission.mapper.DataPermissionTableRuleMapper
 import io.choerodon.hap.security.permission.service.IDataPermissionRuleDetailService;
 import io.choerodon.hap.security.permission.service.IDataPermissionRuleService;
 import io.choerodon.hap.security.permission.service.IDataPermissionTableRuleService;
-import io.choerodon.base.annotation.Dataset;
-import io.choerodon.dataset.exception.DatasetException;
-import io.choerodon.dataset.service.IDatasetService;
 import io.choerodon.message.IMessagePublisher;
+import io.choerodon.mybatis.common.query.Comparison;
+import io.choerodon.mybatis.common.query.WhereField;
 import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.entity.Criteria;
 import io.choerodon.mybatis.service.BaseServiceImpl;
 import io.choerodon.web.core.IRequest;
-import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author jialong.zuo@hand-china.com
@@ -99,8 +103,10 @@ public class DataPermissionRuleServiceImpl extends BaseServiceImpl<DataPermissio
         try {
             DataPermissionRule example = new DataPermissionRule();
             BeanUtils.populate(example, body);
-            return select(example, page, pageSize);
-        }catch (Exception e){
+            Criteria criteria = new Criteria(example);
+            criteria.where(new WhereField(DataPermissionRule.FIELD_RULE_CODE, Comparison.LIKE), new WhereField(DataPermissionRule.FIELD_RULE_NAME, Comparison.LIKE));
+            return selectOptions(example, criteria, page, pageSize);
+        } catch (Exception e) {
             throw new DatasetException("dataset.error", e);
         }
     }
@@ -108,8 +114,8 @@ public class DataPermissionRuleServiceImpl extends BaseServiceImpl<DataPermissio
     @Override
     public List<DataPermissionRule> mutations(List<DataPermissionRule> objs) {
         batchUpdate(objs);
-        for (DataPermissionRule rule : objs){
-            if (rule.get__status().equals(BaseDTO.STATUS_DELETE)){
+        for (DataPermissionRule rule : objs) {
+            if (rule.get__status().equals(BaseDTO.STATUS_DELETE)) {
                 deletePostFilter(rule.getRuleId());
             }
         }

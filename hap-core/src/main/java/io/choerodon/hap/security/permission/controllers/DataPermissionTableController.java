@@ -1,22 +1,18 @@
 package io.choerodon.hap.security.permission.controllers;
 
-import io.choerodon.hap.security.permission.dto.DataPermissionTable;
-import io.choerodon.hap.security.permission.service.IDataPermissionTableService;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.web.controller.BaseController;
-import io.choerodon.web.core.IRequest;
-import io.choerodon.web.dto.ResponseData;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.hap.security.permission.dto.DataPermissionTable;
+import io.choerodon.hap.security.permission.service.IDataPermissionTableService;
+import io.choerodon.web.controller.BaseController;
+import io.choerodon.web.dto.ResponseData;
 
 /**
  * @author jialong.zuo@hand-china.com
@@ -33,7 +29,6 @@ public class DataPermissionTableController extends BaseController {
     @RequestMapping(value = "/query")
     public ResponseData query(DataPermissionTable dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
-        IRequest requestContext = createRequestContext(request);
         return new ResponseData(service.select(dto, page, pageSize));
     }
 

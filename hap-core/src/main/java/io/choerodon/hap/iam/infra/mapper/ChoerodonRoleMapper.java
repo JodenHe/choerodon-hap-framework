@@ -1,13 +1,14 @@
 package io.choerodon.hap.iam.infra.mapper;
 
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import io.choerodon.hap.iam.api.query.RoleQuery;
 import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import io.choerodon.hap.iam.infra.enums.MemberType;
 import io.choerodon.mybatis.common.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * @author wuguokai
@@ -56,7 +57,7 @@ public interface ChoerodonRoleMapper extends Mapper<RoleDTO> {
      */
     List<RoleDTO> selectRolesNotAssignToUser(RoleDTO role);
 
-    List<RoleDTO> fulltextSearch(@Param("roleQuery") RoleQuery roleQuery);
+    List<RoleDTO> fulltextSearch(@Param("roleQuery") RoleQuery roleQuery, @Param("param") String param);
 
     RoleDTO roleWithPermissions(Long id);
 }

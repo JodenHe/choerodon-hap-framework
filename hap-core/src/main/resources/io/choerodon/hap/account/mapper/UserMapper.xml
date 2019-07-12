@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.hap.account.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="io.choerodon.hap.account.dto.User" extends="io.choerodon.mybatis.mapper.StdMapper.STD">
+    <resultMap id="BaseResultMap" type="io.choerodon.hap.account.dto.User"
+               extends="io.choerodon.mybatis.mapper.StdMapper.STD">
         <id column="USER_ID" property="userId" jdbcType="DECIMAL"/>
         <result column="USER_NAME" property="userName" jdbcType="VARCHAR"/>
         <result column="USER_TYPE" property="userType" jdbcType="VARCHAR"/>
@@ -190,24 +191,24 @@
 
     <select id="fuzzyQueryUsersByRoleAssignmentSearchDTO" resultMap="BaseResultMap">
         <bind name="__current_lang" value="@io.choerodon.mybatis.util.OGNL@language()"/>
-        SELECT DISTINCT su.user_id,su.user_name FROM sys_user su
+        SELECT DISTINCT su.user_id,su.user_name
+        FROM sys_user su
         LEFT JOIN iam_member_role imr ON ( imr.member_id = su.user_id and imr.member_type = 'user')
         LEFT JOIN iam_role ir ON ir.id = imr.role_id
         LEFT JOIN iam_role_tl irt ON (ir.id = irt.id and irt.lang = #{__current_lang})
         <where>
+            <if test="param != null">
+                AND (
+                su.user_name LIKE concat(concat('%',#{param}),'%')
+                OR irt.name LIKE concat(concat('%',#{param}),'%')
+                )
+            </if>
             <if test="roleAssignmentSearchDTO != null">
                 <if test="roleAssignmentSearchDTO.userName != null">
-                    AND iu.user_name LIKE concat(concat('%',#{roleAssignmentSearchDTO.userName}),'%')
+                    AND su.user_name LIKE concat(concat('%',#{roleAssignmentSearchDTO.userName}),'%')
                 </if>
-
                 <if test="roleAssignmentSearchDTO.roleName != null">
                     AND irt.name LIKE concat(concat('%',#{roleAssignmentSearchDTO.roleName}),'%')
-                </if>
-                <if test="param != null">
-                    AND(
-                    iu.user_name LIKE concat(concat('%',#{param}),'%')
-                    OR irt.name LIKE concat(concat('%',#{param}),'%')
-                    )
                 </if>
             </if>
         </where>

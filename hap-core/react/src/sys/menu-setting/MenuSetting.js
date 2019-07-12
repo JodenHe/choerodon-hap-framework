@@ -550,7 +550,7 @@ export default class MenuSetting extends Component {
   checkDropBesides(record) {
     const { dragData } = this.state;
     /* eslint-disable-next-line */
-    const canBeside = record.__level__ === 0 ? dragData.type !== 'menu' : (dragData.type !== 'root' && !hasDirChild(dragData));
+    const canBeside = record.__level__ === 0 ? dragData.type !== 'menu_item' : (dragData.type !== 'root' && !hasDirChild(dragData));
     return dragData && canBeside;
   }
 
@@ -681,11 +681,14 @@ export default class MenuSetting extends Component {
       // eslint-disable-next-line no-underscore-dangle
       menu.__status = 'add';
     } else {
-      menu.sort = topMenuSign ? index : 10 * (index + 1);
-      if (!(menu.sort === originMenu.sort && menu.parentCode === originMenu.parentCode)) {
-        // eslint-disable-next-line no-underscore-dangle
-        menu.__status = 'update';
-      }
+      // menu.sort = topMenuSign ? index : 10 * (index + 1);
+      // if (!(menu.sort === originMenu.sort && menu.parentCode === originMenu.parentCode)) {
+      //   // eslint-disable-next-line no-underscore-dangle
+      //   menu.__status = 'update';
+      // }
+      menu.sort = index;
+      // eslint-disable-next-line no-underscore-dangle
+      menu.__status = 'update';
     }
     if (menu.subMenus && menu.subMenus.length) {
       menu.subMenus.forEach((m, i) => this.checkStatus(m, i, origins));
@@ -701,6 +704,7 @@ export default class MenuSetting extends Component {
     currents.forEach((m, i) => this.checkStatus(m, i, origins, true));
     
     const deleteArr = this.deleteCopy;
+    // eslint-disable-next-line
     deleteArr.forEach(v => v.__status = 'delete');
 
     const addDelete = currents.concat(deleteArr);
@@ -718,25 +722,18 @@ export default class MenuSetting extends Component {
       axios.post(`/v1/menus/menu_config?code=CHOERODON.CODE.TOP.${type.toUpperCase()}`, JSON.stringify(adjustSort(afterAddStatus)))
         .then((menus) => {
           this.setState({ submitting: false });
-          if (menus.failed) {
-            Choerodon.prompt(menus.message);
+          if (menus !== '') {
+            Choerodon.prompt('保存失败');
           } else {
-            MenuStore.setMenuData(_.cloneDeep(menus), type);
             Choerodon.prompt(intl.formatMessage({
               id: 'save.success',
             }));
-            saved = true;
-            menuGroup[type] = normalizeMenus(menus);
-            newPrevMenuGroup[type] = JSON.parse(JSON.stringify(menuGroup))[type];
-            this.setState({
-              menuGroup,
-              prevMenuGroup: newPrevMenuGroup,
-              tempDirs: [],
-            });
+            this.initMenu();
           }
         })
         .catch((error) => {
           Choerodon.handleResponseError(error);
+          Choerodon.prompt('保存失败');
           this.setState({ submitting: false });
         });
     }

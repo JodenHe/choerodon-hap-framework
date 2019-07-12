@@ -1,6 +1,24 @@
 package io.choerodon.hap.adaptor.impl;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.UUID;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import com.google.common.base.Throwables;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.util.WebUtils;
+
 import io.choerodon.base.util.BaseConstants;
 import io.choerodon.hap.account.dto.User;
 import io.choerodon.hap.account.exception.RoleException;
@@ -15,34 +33,9 @@ import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import io.choerodon.hap.iam.infra.enums.MemberType;
 import io.choerodon.hap.security.TokenUtils;
 import io.choerodon.hap.security.captcha.ICaptchaManager;
-import io.choerodon.hap.system.controllers.sys.SysConfigController;
-import io.choerodon.hap.system.dto.SysConfig;
-import io.choerodon.hap.system.dto.SystemInfo;
-import io.choerodon.redis.Cache;
 import io.choerodon.web.core.IRequest;
 import io.choerodon.web.dto.ResponseData;
 import io.choerodon.web.util.TimeZoneUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.util.HtmlUtils;
-import org.springframework.web.util.WebUtils;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.UUID;
 
 /**
  * 默认登陆代理类.
@@ -52,7 +45,6 @@ import java.util.UUID;
  * @since 2016年1月19日
  */
 public class DefaultLoginAdaptor implements ILoginAdaptor {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultLoginAdaptor.class);
 
     private static final boolean VALIDATE_CAPTCHA = true;
 
@@ -94,10 +86,6 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
 
     @Autowired
     private CaptchaConfig captchaConfig;
-
-    @Autowired
-    @Qualifier("configCache")
-    private Cache configCache;
 
     @Autowired
     private SysConfigManager sysConfigManager;
@@ -297,8 +285,6 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
         // 向前端传递是否开启验证码
         view.addObject("ENABLE_CAPTCHA", captchaConfig.isEnableCaptcha(cookie));
 
-        view.addObject("SYS_TITLE", HtmlUtils.htmlEscape(sysConfigManager.getSysTitle()));
-
         Boolean error = (Boolean) request.getAttribute("error");
         Throwable exception = (Exception) request.getAttribute("exception");
         String code = UserException.ERROR_USER_PASSWORD;
@@ -312,27 +298,7 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
             msg = messageSource.getMessage(code, null, locale);
             view.addObject("msg", msg);
         }
-
-        SystemInfo systemInfo = new SystemInfo();
-        SysConfig logo = (SysConfig) configCache.getValue(SysConfigController.SYS_LOGO_CONFIG_CODE);
-        SysConfig favicon = (SysConfig) configCache.getValue(SysConfigController.SYS_FAVICON_CONFIG_CODE);
-        SysConfig title = (SysConfig) configCache.getValue(SysConfigController.SYS_TITLE);
-        if (logo == null) {
-            logger.warn("System logo is null");
-        } else {
-            systemInfo.setLogoImageSrc(logo.getConfigValue());
-        }
-        if (favicon == null) {
-            logger.warn("System favicon is null");
-        } else {
-            systemInfo.setFaviconImageSrc(favicon.getConfigValue());
-        }
-        if (title == null) {
-            logger.warn("System title is null");
-        } else {
-            systemInfo.setTitle(title.getConfigValue());
-        }
-        view.addObject("systemInfo", systemInfo);
+        view.addObject("systemInfo", sysConfigManager.getSystemInfo());
         return view;
     }
 
@@ -340,7 +306,7 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
     public ModelAndView roleView(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = new ModelAndView(getRoleView(request));
         HttpSession session = request.getSession(false);
-        mv.addObject("SYS_TITLE", HtmlUtils.htmlEscape(sysConfigManager.getSysTitle()));
+        mv.addObject("systemInfo", sysConfigManager.getSystemInfo());
         if (session != null) {
             // 获取user
             Long userId = (Long) session.getAttribute(User.FIELD_USER_ID);

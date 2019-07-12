@@ -17,6 +17,7 @@ import io.choerodon.hap.iam.app.service.ChoerodonRoleService;
 import io.choerodon.hap.iam.app.service.RolePermissionService;
 import io.choerodon.hap.iam.exception.ChoerodonRoleException;
 import io.choerodon.hap.iam.infra.asserts.asserts.RoleAssertHelper;
+import io.choerodon.hap.iam.infra.common.util.ParamUtils;
 import io.choerodon.hap.iam.infra.dto.PermissionDTO;
 import io.choerodon.hap.iam.infra.dto.RoleDTO;
 import io.choerodon.hap.iam.infra.dto.RolePermissionDTO;
@@ -66,7 +67,7 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
 
     @Override
     public PageInfo<RoleDTO> pagingSearch(int page, int size, RoleQuery roleQuery) {
-        return PageHelper.startPage(page, size).doSelectPageInfo(() -> roleMapper.fulltextSearch(roleQuery));
+        return PageHelper.startPage(page, size).doSelectPageInfo(() -> roleMapper.fulltextSearch(roleQuery, ParamUtils.arrToStr(roleQuery.getParams())));
     }
 
     @Override
@@ -162,7 +163,7 @@ public class ChoerodonRoleServiceImpl implements ChoerodonRoleService {
     public List<RoleDTO> fuzzyQueryRolesByRoleName(String roleName) {
         RoleQuery roleQuery = new RoleQuery();
         roleQuery.setName(roleName);
-        return roleMapper.fulltextSearch(roleQuery);
+        return roleMapper.fulltextSearch(roleQuery, null);
     }
 
     /**

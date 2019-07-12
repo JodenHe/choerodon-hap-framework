@@ -5,7 +5,7 @@
     <parent>
         <artifactId>hap-parent</artifactId>
         <groupId>io.choerodon</groupId>
-        <version>4.0.2-RELEASE</version>
+        <version>4.0.3-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hap-attachment</artifactId>

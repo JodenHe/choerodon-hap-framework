@@ -1,9 +1,9 @@
 function phoneValidator(value, name, record) {
-  const pattern = /^1[3-9]\d{9}$/;
+  const pattern = /^1(3|4|5|6|7|8|9)\d{9}$/;
   if (pattern.test(value)) {
     return true;
   }
-  return '请确保您输入的手机号是合法的格式！';
+  return '请输入有效的手机号码！';
 }
 
 export default {

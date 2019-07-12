@@ -81,8 +81,7 @@ public class SysConfigController extends BaseController {
     private ISysConfigService configService;
 
     @Autowired
-    @Qualifier("configCache")
-    private Cache configCache;
+    private SysConfigManager sysConfigManager;
 
     @Value("${file.imageUploadDirectory}")
     private String imageUploadDirectory;
@@ -149,26 +148,7 @@ public class SysConfigController extends BaseController {
     @PostMapping(value = "/system/info")
     @ResponseBody
     public SystemInfo systemInfo(final HttpServletRequest request) {
-        SystemInfo systemInfo = new SystemInfo();
-        SysConfig logo = (SysConfig) configCache.getValue(SYS_LOGO_CONFIG_CODE);
-        SysConfig favicon = (SysConfig) configCache.getValue(SYS_FAVICON_CONFIG_CODE);
-        SysConfig title = (SysConfig) configCache.getValue(SYS_TITLE);
-        if (logo == null) {
-            logger.warn("System logo is null");
-        } else {
-            systemInfo.setLogoImageSrc(logo.getConfigValue());
-        }
-        if (favicon == null) {
-            logger.warn("System favicon is null");
-        } else {
-            systemInfo.setFaviconImageSrc(favicon.getConfigValue());
-        }
-        if (title == null) {
-            logger.warn("System title is null");
-        } else {
-            systemInfo.setTitle(title.getConfigValue());
-        }
-        return systemInfo;
+        return sysConfigManager.getSystemInfo();
     }
 
     @Permission(type = ResourceType.SITE)

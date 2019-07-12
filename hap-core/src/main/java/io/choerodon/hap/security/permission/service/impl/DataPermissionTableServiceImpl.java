@@ -1,22 +1,25 @@
 package io.choerodon.hap.security.permission.service.impl;
 
-import io.choerodon.hap.security.permission.dto.DataPermissionTable;
-import io.choerodon.hap.security.permission.dto.DataPermissionTableRule;
-import io.choerodon.hap.security.permission.mapper.DataPermissionTableRuleMapper;
-import io.choerodon.hap.security.permission.mapper.DatasetMapper;
-import io.choerodon.hap.security.permission.service.IDataPermissionTableService;
-import io.choerodon.base.annotation.Dataset;
-import io.choerodon.dataset.exception.DatasetException;
-import io.choerodon.dataset.service.IDatasetService;
-import io.choerodon.message.IMessagePublisher;
-import io.choerodon.mybatis.entity.BaseDTO;
-import io.choerodon.mybatis.service.BaseServiceImpl;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import io.choerodon.base.annotation.Dataset;
+import io.choerodon.dataset.exception.DatasetException;
+import io.choerodon.dataset.service.IDatasetService;
+import io.choerodon.hap.security.permission.dto.DataPermissionTable;
+import io.choerodon.hap.security.permission.dto.DataPermissionTableRule;
+import io.choerodon.hap.security.permission.mapper.DataPermissionTableRuleMapper;
+import io.choerodon.hap.security.permission.service.IDataPermissionTableService;
+import io.choerodon.message.IMessagePublisher;
+import io.choerodon.mybatis.common.query.Comparison;
+import io.choerodon.mybatis.common.query.WhereField;
+import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.entity.Criteria;
+import io.choerodon.mybatis.service.BaseServiceImpl;
 
 /**
  * @author jialong.zuo@hand-china.com
@@ -30,8 +33,6 @@ public class DataPermissionTableServiceImpl extends BaseServiceImpl<DataPermissi
 
     @Autowired
     IMessagePublisher iMessagePublisher;
-    @Autowired
-    private DatasetMapper datasetMapper;
 
     @Override
     public void removeTableWithRule(List<DataPermissionTable> dataMaskTables) {
@@ -43,6 +44,7 @@ public class DataPermissionTableServiceImpl extends BaseServiceImpl<DataPermissi
             iMessagePublisher.publish("dataPermission.tableRemove", v);
         });
     }
+
     public void deletePostFilter(DataPermissionTable table) {
         DataPermissionTableRule rule = new DataPermissionTableRule();
         rule.setTableId(table.getTableId());
@@ -55,8 +57,10 @@ public class DataPermissionTableServiceImpl extends BaseServiceImpl<DataPermissi
         try {
             DataPermissionTable example = new DataPermissionTable();
             BeanUtils.populate(example, body);
-            return select(example, page, pageSize);
-        }catch (Exception e){
+            Criteria criteria = new Criteria(example);
+            criteria.where(new WhereField(DataPermissionTable.FIELD_TABLE_NAME, Comparison.LIKE), new WhereField(DataPermissionTable.FIELD_DESCRIPTION, Comparison.LIKE));
+            return selectOptions(example, criteria, page, pageSize);
+        } catch (Exception e) {
             throw new DatasetException("dataset.error", e);
         }
     }
@@ -64,11 +68,9 @@ public class DataPermissionTableServiceImpl extends BaseServiceImpl<DataPermissi
     @Override
     public List<DataPermissionTable> mutations(List<DataPermissionTable> objs) {
         batchUpdate(objs);
-        for (DataPermissionTable table : objs){
-            switch (table.get__status()){
-                case BaseDTO.STATUS_DELETE:
-                    deletePostFilter(table);
-                    break;
+        for (DataPermissionTable table : objs) {
+            if (BaseDTO.STATUS_DELETE.equals(table.get__status())) {
+                deletePostFilter(table);
             }
         }
         return objs;
